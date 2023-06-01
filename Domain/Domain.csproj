@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EntitiesConfigurations\" />
+    <Folder Include="Configurations\" />
     <Folder Include="Entities\" />
     <Folder Include="Enums\" />
     <Folder Include="Interfaces\" />
