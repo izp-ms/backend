@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
@@ -16,6 +17,15 @@ public class UserController : ControllerBase
     {
         _userService = userService;
         _logger = logger;
+    }
+
+    // TODO Only for development
+    [HttpGet]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> GetAll()
+    {
+        var users = await _userService.GetAll();
+        return Ok(users);
     }
 
     [HttpPost("register")]

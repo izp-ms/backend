@@ -1,5 +1,6 @@
 ﻿using Application.Constants;
 using Application.Dto;
+using Application.Exceptions;
 using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
@@ -23,9 +24,29 @@ public class UserService : IUserService
         _passwordHasher = passwordHasher;
     }
 
+    public Task<IEnumerable<User>> GetAll()
+    {
+        return _userRepository.GetAll();
+    }
+
     public async Task<string> Login(LoginUserDto loginUserDto)
     {
-        throw new NotImplementedException();
+        User storedUser = _userRepository.GetUserByEmail(loginUserDto.Email);
+
+        if (storedUser is null)
+        {
+            throw new InvalidLoginException(loginUserDto.Email);
+        }
+
+        PasswordVerificationResult passwordResult = _passwordHasher.VerifyHashedPassword(storedUser, storedUser.Password, loginUserDto.Password);
+        if (passwordResult != PasswordVerificationResult.Success)
+        {
+            throw new InvalidLoginException(loginUserDto.Email, loginUserDto.Password);
+        }
+
+        User userDataForClaims = _userRepository.GetUserByEmail(loginUserDto.Email);
+
+        return _userRepository.Login(userDataForClaims);
     }
 
     public async Task<RegistrationResult> Register(RegisterUserDto registerUserDto)
@@ -59,7 +80,8 @@ public class UserService : IUserService
 
             string hashedPassword = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
             newUser.Password = hashedPassword;
-            newUser.Role = Role.User;
+            newUser.Role = "USER";
+            newUser.CreatedAt = DateTime.UtcNow;
 
             await _userRepository.Insert(newUser);
         }
