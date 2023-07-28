@@ -1,14 +1,3 @@
-using Application.Dto;
-using Application.Exceptions;
-using Application.Services;
-using AutoMapper;
-using Domain.Entities;
-using Domain.Enums;
-using Domain.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Moq;
-using Xunit;
-
 namespace Tests;
 
 public class UserServiceTests

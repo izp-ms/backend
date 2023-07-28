@@ -11,7 +11,6 @@ public class DataSeeder
 
     public void Seed()
     {
-        Console.WriteLine("elo");
         if (_dataContext == null || !_dataContext.Database.CanConnect())
         {
             return;
