@@ -2,7 +2,6 @@
 using Application.Interfaces;
 using Application.Response;
 using Domain.Entities;
-using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +12,13 @@ namespace WebAPI.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IUserContextService _userContextService;
     private readonly ILogger<UserController> _logger;
 
-    public UserController(IUserService userService, ILogger<UserController> logger)
+    public UserController(IUserService userService, IUserContextService userContextService, ILogger<UserController> logger)
     {
         _userService = userService;
+        _userContextService = userContextService;
         _logger = logger;
     }
 
@@ -58,34 +59,30 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
     {
         _logger.Log(LogLevel.Information, "Login user");
-        try
-        {
-            _logger.Log(LogLevel.Information, $"Login user: {loginUserDto.Email}");
-            LoginResponse loginResponse = await _userService.Login(loginUserDto);
-            return Ok(loginResponse);
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to login user: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
+        LoginResponse loginResponse = await _userService.Login(loginUserDto);
+        return Ok(loginResponse);
     }
 
     [HttpDelete]
     [Authorize]
-    public async Task<IActionResult> DeleteUser([FromBody] int userId)
+    public async Task<IActionResult> DeleteUser([FromQuery] int userId)
     {
         _logger.Log(LogLevel.Information, "Delete user");
         try
         {
+            if (_userContextService.GetUserId != userId)
+            {
+                _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to delete user with id: {userId}");
+                return BadRequest(new { message = "Unauthorized" });
+            }
             User deletedUser = await _userService.DeleteUser(userId);
             _logger.Log(LogLevel.Information, $"Deleted user with id: {deletedUser.Id}");
-            return Ok(deletedUser);
+            return Ok(new { message = $"Deleted user with id: {deletedUser.Id}" });
         }
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to delete user: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
+            return BadRequest(new { message = $"Failed to delete user: {ex.Message}" });
         }
     }
 

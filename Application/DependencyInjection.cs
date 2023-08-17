@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-
 namespace Application;
 
 public static class DependencyInjection
@@ -14,6 +13,7 @@ public static class DependencyInjection
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddScoped<IUserContextService, UserContextService>();
         services.AddScoped<IUserService, UserService>();
 
         return services;
