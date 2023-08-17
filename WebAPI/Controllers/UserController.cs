@@ -59,8 +59,16 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
     {
         _logger.Log(LogLevel.Information, "Login user");
-        LoginResponse loginResponse = await _userService.Login(loginUserDto);
-        return Ok(loginResponse);
+        try
+        {
+            LoginResponse loginResponse = await _userService.Login(loginUserDto);
+            return Ok(loginResponse);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Login failed: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete]
