@@ -1,8 +1,8 @@
 ﻿using Application.Constants;
 using Application.Dto;
-using Application.Exceptions;
 using Application.Helpers;
 using Application.Interfaces;
+using Application.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
@@ -29,27 +29,21 @@ public class UserService : IUserService
         return _userRepository.GetAll();
     }
 
-    public async Task<string> Login(LoginUserDto loginUserDto)
+    public Task<LoginResponse> Login(LoginUserDto loginUserDto)
     {
-        User storedUser = _userRepository.GetUserByEmail(loginUserDto.Email);
-
-        if (storedUser is null)
-        {
-            throw new InvalidLoginException(loginUserDto.Email);
-        }
-
+        User storedUser = _userRepository.GetUserByEmail(loginUserDto.Email) ?? throw new Exception("User not found");
         PasswordVerificationResult passwordResult = _passwordHasher.VerifyHashedPassword(storedUser, storedUser.Password, loginUserDto.Password);
         if (passwordResult != PasswordVerificationResult.Success)
         {
-            throw new InvalidLoginException(loginUserDto.Email, loginUserDto.Password);
+            throw new Exception("Password is incorrect");
         }
 
         User userDataForClaims = _userRepository.GetUserByEmail(loginUserDto.Email);
-
-        return _userRepository.Login(userDataForClaims);
+        LoginResponse loginResponse = new LoginResponse() { Token = _userRepository.Login(userDataForClaims) };
+        return Task.FromResult(loginResponse);
     }
 
-    public async Task<RegistrationResult> Register(RegisterUserDto registerUserDto)
+    public async Task<RegisterResponse> Register(RegisterUserDto registerUserDto)
     {
         RegistrationResult result = RegistrationResult.Success;
 
@@ -74,18 +68,26 @@ public class UserService : IUserService
             result = RegistrationResult.EmailAlreadyExists;
         }
 
-        if (result == RegistrationResult.Success)
+        if (result != RegistrationResult.Success)
         {
-            User newUser = _mapper.Map<User>(registerUserDto);
-
-            string hashedPassword = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
-            newUser.Password = hashedPassword;
-            newUser.Role = "USER";
-            newUser.CreatedAt = DateTime.UtcNow;
-
-            await _userRepository.Insert(newUser);
+            throw new Exception(result.ToString());
         }
 
-        return result;
+        User newUser = _mapper.Map<User>(registerUserDto);
+
+        string hashedPassword = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
+        newUser.Password = hashedPassword;
+        newUser.Role = "USER";
+        newUser.CreatedAt = DateTime.UtcNow;
+
+        User user = await _userRepository.Insert(newUser);
+        RegisterResponse registerResponse = _mapper.Map<RegisterResponse>(user);
+        return registerResponse;
+    }
+
+    public Task<User> DeleteUser(int userId)
+    {
+        User userToDelete = _userRepository.Get(userId).Result ?? throw new Exception(userId.ToString());
+        return _userRepository.Delete(userToDelete);
     }
 }

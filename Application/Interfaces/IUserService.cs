@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Response;
 using Domain.Entities;
 using Domain.Enums;
 
@@ -6,8 +7,9 @@ namespace Application.Interfaces;
 
 public interface IUserService
 {
-    Task<RegistrationResult> Register(RegisterUserDto registerUserDto);
-    Task<string> Login(LoginUserDto loginUserDto);
+    Task<RegisterResponse> Register(RegisterUserDto registerUserDto);
+    Task<LoginResponse> Login(LoginUserDto loginUserDto);
+    Task<User> DeleteUser(int userId);
 
     Task<IEnumerable<User>> GetAll();
 }

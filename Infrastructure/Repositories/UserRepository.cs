@@ -41,7 +41,8 @@ public class UserRepository : Repository<User>, IUserRepository
     {
         List<Claim> claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.NameIdentifier, user.NickName),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.NickName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role),
         };

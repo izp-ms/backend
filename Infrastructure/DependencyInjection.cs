@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Infrastructure.Data.Seeder;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         // services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+        services.AddTransient<DataSeeder>();
         services.AddScoped<IUserRepository, UserRepository>();
 
         return services;

@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Response;
 using AutoMapper;
 using Domain.Entities;
 
@@ -12,6 +13,7 @@ public static class AutoMapperConfig
         {
             cfg.CreateMap<RegisterUserDto, User>();
             cfg.CreateMap<LoginUserDto, User>();
+            cfg.CreateMap<User, RegisterResponse>();
         })
             .CreateMapper();
     }
