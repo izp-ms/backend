@@ -8,6 +8,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using System.Transactions;
 
 namespace Application.Services;
 
@@ -15,13 +16,24 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IUserStatsRepository _userStatsRepository;
+    private readonly IUserDetailRepository _userDetailRepository;
+    private readonly IAddressRepository _addressRepository;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
-    public UserService(IUserRepository userRepository, IUserStatsRepository userStatsRepository, IMapper mapper, IPasswordHasher<User> passwordHasher)
+    public UserService(
+        IUserRepository userRepository,
+        IUserStatsRepository userStatsRepository,
+        IUserDetailRepository userDetailRepository,
+        IAddressRepository addressRepository,
+        IMapper mapper,
+        IPasswordHasher<User> passwordHasher
+        )
     {
         _userRepository = userRepository;
         _userStatsRepository = userStatsRepository;
+        _userDetailRepository = userDetailRepository;
+        _addressRepository = addressRepository;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
     }
@@ -84,13 +96,36 @@ public class UserService : IUserService
 
         User user = await _userRepository.Insert(newUser);
         await _userStatsRepository.Insert(new UserStat() { Id = user.Id, PostcardsReceived = 0, PostcardsSent = 0, Score = 0 });
+        await _addressRepository.Insert(new Address() { Id = user.Id });
+        await _userDetailRepository.Insert(new UserDetail() { Id = user.Id });
         RegisterResponse registerResponse = _mapper.Map<RegisterResponse>(user);
         return registerResponse;
     }
 
-    public Task<User> DeleteUser(int userId)
+    public async Task<User> DeleteUser(int userId)
     {
-        User userToDelete = _userRepository.Get(userId).Result ?? throw new Exception(userId.ToString());
-        return _userRepository.Delete(userToDelete);
+        using TransactionScope transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        try
+        {
+            User userToDelete = await _userRepository.Get(userId) ?? throw new Exception(userId.ToString());
+            UserStat userStatToDelete = await _userStatsRepository.Get(userId) ?? throw new Exception(userId.ToString());
+            await _userStatsRepository.Delete(userStatToDelete);
+
+            UserDetail userDetailToDelete = await _userDetailRepository.Get(userId) ?? throw new Exception(userId.ToString());
+            await _userDetailRepository.Delete(userDetailToDelete);
+
+            Address addressToDelete = await _addressRepository.Get(userId) ?? throw new Exception(userId.ToString());
+            await _addressRepository.Delete(addressToDelete);
+
+            await _userRepository.Delete(userToDelete);
+
+            transactionScope.Complete();
+
+            return userToDelete;
+        }
+        catch
+        {
+            throw;
+        }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
-using AutoMapper;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +13,11 @@ public class UserStatsController : ControllerBase
     private readonly IUserStatsService _userStatsService;
     private readonly IUserContextService _userContextService;
     private readonly ILogger<UserStatsController> _logger;
-    private readonly IMapper _mapper;
 
-    public UserStatsController(IUserStatsService userStatsService, IUserContextService userContextService, IMapper mapper, ILogger<UserStatsController> logger)
+    public UserStatsController(IUserStatsService userStatsService, IUserContextService userContextService, ILogger<UserStatsController> logger)
     {
         _userStatsService = userStatsService;
         _userContextService = userContextService;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -31,8 +27,8 @@ public class UserStatsController : ControllerBase
         _logger.Log(LogLevel.Information, "Get user stats");
         try
         {
-            UserStat userStats = await _userStatsService.GetUserStatsById((int)_userContextService.GetUserId);
-            return Ok(_mapper.Map<UserStatDto>(userStats));
+            UserStatDto userStatDto = await _userStatsService.GetUserStatsById((int)_userContextService.GetUserId);
+            return Ok(userStatDto);
         }
         catch (Exception ex)
         {
@@ -52,9 +48,9 @@ public class UserStatsController : ControllerBase
                 _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to update user stats with id: {userStats.Id}");
                 return BadRequest(new { message = "Unauthorized" });
             }
-            UserStat updatedUserStats = await _userStatsService.UpdateUserStats(userStats);
-            _logger.Log(LogLevel.Information, $"Updated user stats with id: {updatedUserStats.Id}");
-            return Ok(_mapper.Map<UserStatDto>(updatedUserStats));
+            UserStatDto updatedUserStatDto = await _userStatsService.UpdateUserStats(userStats);
+            _logger.Log(LogLevel.Information, $"Updated user stats with id: {updatedUserStatDto.Id}");
+            return Ok(updatedUserStatDto);
         }
         catch (Exception ex)
         {

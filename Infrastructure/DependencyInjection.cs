@@ -13,6 +13,8 @@ public static class DependencyInjection
         services.AddTransient<DataSeeder>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserStatsRepository, UserStatsRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IUserDetailRepository, UserDetailRepository>();
 
         return services;
     }
