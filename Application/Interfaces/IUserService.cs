@@ -1,7 +1,6 @@
 ﻿using Application.Dto;
 using Application.Response;
 using Domain.Entities;
-using Domain.Enums;
 
 namespace Application.Interfaces;
 

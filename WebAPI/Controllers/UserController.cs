@@ -29,15 +29,6 @@ public class UserController : ControllerBase
         return Task.FromResult<IActionResult>(Ok(response));
     }
 
-    //// TODO Only for development
-    //[HttpGet]
-    //[Authorize(Roles = "ADMIN")]
-    //public async Task<IActionResult> GetAll()
-    //{
-    //    var users = await _userService.GetAll();
-    //    return Ok(users);
-    //}
-
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
     {

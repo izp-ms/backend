@@ -14,6 +14,12 @@ public static class AutoMapperConfig
             cfg.CreateMap<RegisterUserDto, User>();
             cfg.CreateMap<LoginUserDto, User>();
             cfg.CreateMap<User, RegisterResponse>();
+            cfg.CreateMap<UserStatDto, UserStat>();
+            cfg.CreateMap<UserStat, UserStatDto>();
+            cfg.CreateMap<AddressDto, Address>();
+            cfg.CreateMap<Address, AddressDto>();
+            cfg.CreateMap<UserDetailDto, UserDetail>();
+            cfg.CreateMap<UserDetail, UserDetailDto>();
         })
             .CreateMapper();
     }
