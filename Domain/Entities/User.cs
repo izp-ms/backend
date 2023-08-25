@@ -7,4 +7,8 @@ public class User : BaseEntity
     public string Password { get; set; }
     public string Role { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public virtual UserDetail UsersDetails { get; set; }
+    public virtual UserStat UsersStats { get; set; }
+    public virtual Address Address { get; set; }
 }

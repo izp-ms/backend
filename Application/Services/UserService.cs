@@ -14,12 +14,14 @@ namespace Application.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUserStatsRepository _userStatsRepository;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
-    public UserService(IUserRepository userRepository, IMapper mapper, IPasswordHasher<User> passwordHasher)
+    public UserService(IUserRepository userRepository, IUserStatsRepository userStatsRepository, IMapper mapper, IPasswordHasher<User> passwordHasher)
     {
         _userRepository = userRepository;
+        _userStatsRepository = userStatsRepository;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
     }
@@ -81,6 +83,7 @@ public class UserService : IUserService
         newUser.CreatedAt = DateTime.UtcNow;
 
         User user = await _userRepository.Insert(newUser);
+        await _userStatsRepository.Insert(new UserStat() { Id = user.Id, PostcardsReceived = 0, PostcardsSent = 0, Score = 0 });
         RegisterResponse registerResponse = _mapper.Map<RegisterResponse>(user);
         return registerResponse;
     }
