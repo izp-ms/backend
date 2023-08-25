@@ -12,10 +12,10 @@ public class AddressDto : IMap
     public string Country { get; set; }
     public string CountryCode { get; set; }
 
-    public void Mapping(Profile profie)
+    public void Mapping(Profile profile)
     {
-        profie.CreateMap<AddressDto, Address>();
-        profie.CreateMap<Address, AddressDto>();
+        profile.CreateMap<AddressDto, Address>();
+        profile.CreateMap<Address, AddressDto>();
     }
 }
 

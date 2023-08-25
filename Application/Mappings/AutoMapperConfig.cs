@@ -20,8 +20,9 @@ public static class AutoMapperConfig
             cfg.CreateMap<Address, AddressDto>();
             cfg.CreateMap<UserDetailDto, UserDetail>();
             cfg.CreateMap<UserDetail, UserDetailDto>();
+            cfg.CreateMap<PostcardImageDto, PostcardImage>();
+            cfg.CreateMap<PostcardImage, PostcardImageDto>();
         })
             .CreateMapper();
     }
-
 }

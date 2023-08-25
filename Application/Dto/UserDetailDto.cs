@@ -13,9 +13,9 @@ public class UserDetailDto : IMap
     public string AvatarBase64 { get; set; }
     public string Description { get; set; }
 
-    public void Mapping(Profile profie)
+    public void Mapping(Profile profile)
     {
-        profie.CreateMap<UserDetailDto, UserDetail>();
-        profie.CreateMap<UserDetail, UserDetailDto>();
+        profile.CreateMap<UserDetailDto, UserDetail>();
+        profile.CreateMap<UserDetail, UserDetailDto>();
     }
 }

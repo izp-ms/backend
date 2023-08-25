@@ -15,6 +15,8 @@ public class DataContext : DbContext
     public DbSet<UserStat> UsersStats { get; set; }
     public DbSet<UserDetail> UsersDetails { get; set; }
     public DbSet<Address> Address { get; set; }
+    public DbSet<Postcard> Postcards { get; set; }
+    public DbSet<PostcardImage> PostcardsImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,5 +24,8 @@ public class DataContext : DbContext
         modelBuilder.ApplyConfiguration(new UserStatsEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new AddressEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new UserDetailsEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new PostcardImageEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new PostcardEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new UserPostcardEntityTypeConfiguration());
     }
 }
