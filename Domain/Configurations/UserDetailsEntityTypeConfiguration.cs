@@ -11,5 +11,6 @@ public class UserDetailsEntityTypeConfiguration : IEntityTypeConfiguration<UserD
         builder.Property(p => p.FirstName).HasMaxLength(35);
         builder.Property(p => p.LastName).HasMaxLength(35);
         builder.Property(p => p.Description).HasMaxLength(255);
+        builder.Property(p => p.BirthDate).IsRequired(false);
     }
 }

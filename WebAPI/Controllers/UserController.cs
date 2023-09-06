@@ -23,10 +23,24 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public Task<IActionResult> Test()
+    public async Task<IActionResult> GetUser()
     {
-        var response = new { hello = "Hello" };
-        return Task.FromResult<IActionResult>(Ok(response));
+        _logger.Log(LogLevel.Information, "Get user information");
+        try
+        {
+            if (_userContextService.GetUserId == null)
+            {
+                _logger.Log(LogLevel.Information, "Unauthorized");
+                return BadRequest(new { message = "Unauthorized" });
+            }
+            UserDto userData = await _userService.GetUser();
+            return Ok(userData);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to get user information: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPost("register")]

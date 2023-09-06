@@ -11,11 +11,13 @@ namespace Application.Services;
 public class PostcardImageService : IPostcardImageService
 {
     private readonly IPostcardImageRepository _postcardImageRepository;
+    private readonly IPostcardRepository _postcardRepository;
     private readonly IMapper _mapper;
 
-    public PostcardImageService(IPostcardImageRepository postcardImageRepository, IMapper mapper)
+    public PostcardImageService(IPostcardImageRepository postcardImageRepository, IPostcardRepository postcardRepository, IMapper mapper)
     {
         _postcardImageRepository = postcardImageRepository;
+        _postcardRepository = postcardRepository;
         _mapper = mapper;
     }
 
@@ -50,5 +52,24 @@ public class PostcardImageService : IPostcardImageService
             Content = _mapper.Map<IEnumerable<PostcardImage>, IEnumerable<PostcardImageDto>>(postcardImages)
         };
         return paginationResponse;
+    }
+
+    public async Task<PostcardImageDto> DeletePostcardImage(int postcardImageId)
+    {
+        PostcardImage postcardImage = await _postcardImageRepository.Get(postcardImageId);
+        if (postcardImage == null)
+        {
+            throw new Exception($"Postcard image with id: {postcardImageId} does not exist");
+        }
+        IEnumerable<Postcard> postcards = await _postcardRepository.GetAll();
+        foreach (Postcard postcard in postcards)
+        {
+            if (postcard.ImageId == postcardImageId)
+            {
+                throw new Exception($"Postcard image with id: {postcardImageId} is used by postcard with id: {postcard.Id}");
+            }
+        }
+        await _postcardImageRepository.Delete(postcardImage);
+        return _mapper.Map<PostcardImageDto>(postcardImage);
     }
 }

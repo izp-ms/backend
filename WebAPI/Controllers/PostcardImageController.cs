@@ -54,4 +54,21 @@ public class PostcardImageController : ControllerBase
             return BadRequest(new { message = $"Failed to add postcard image: {ex.Message}" });
         }
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeletePostcardImage([FromQuery] int postcardImageId)
+    {
+        _logger.Log(LogLevel.Information, "Delete postcard image");
+        try
+        {
+            await _postcardImageService.DeletePostcardImage(postcardImageId);
+            _logger.Log(LogLevel.Information, $"Deleted postcard image with id: {postcardImageId}");
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to delete postcard image: {ex.Message}");
+            return BadRequest(new { message = $"Failed to delete postcard image: {ex.Message}" });
+        }
+    }
 }

@@ -14,6 +14,7 @@ namespace Application.Services;
 
 public class UserService : IUserService
 {
+    private readonly IUserContextService _userContextService;
     private readonly IUserRepository _userRepository;
     private readonly IUserStatsRepository _userStatsRepository;
     private readonly IUserDetailRepository _userDetailRepository;
@@ -22,6 +23,7 @@ public class UserService : IUserService
     private readonly IPasswordHasher<User> _passwordHasher;
 
     public UserService(
+        IUserContextService contextService,
         IUserRepository userRepository,
         IUserStatsRepository userStatsRepository,
         IUserDetailRepository userDetailRepository,
@@ -30,6 +32,7 @@ public class UserService : IUserService
         IPasswordHasher<User> passwordHasher
         )
     {
+        _userContextService = contextService;
         _userRepository = userRepository;
         _userStatsRepository = userStatsRepository;
         _userDetailRepository = userDetailRepository;
@@ -38,9 +41,19 @@ public class UserService : IUserService
         _passwordHasher = passwordHasher;
     }
 
-    public Task<IEnumerable<User>> GetAll()
+    public async Task<UserDto> GetUser()
     {
-        return _userRepository.GetAll();
+        User user = await _userRepository.Get(_userContextService.GetUserId ?? 0) ?? throw new Exception("User not found");
+        Address address = await _addressRepository.Get(user.Id) ?? throw new Exception("Address not found");
+        UserDetail userDetail = await _userDetailRepository.Get(user.Id) ?? throw new Exception("User detail not found");
+        UserStat userStat = await _userStatsRepository.Get(user.Id) ?? throw new Exception("User stat not found");
+
+        UserDto userDto = _mapper.Map<UserDto>(user);
+        _mapper.Map(address, userDto);
+        _mapper.Map(userDetail, userDto);
+        _mapper.Map(userStat, userDto);
+        return userDto;
+        // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjI1IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InN0cmluZyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InN0cmluZzY1NEBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVU0VSIiwiZXhwIjoxNjk1MTM2NzU2LCJpc3MiOiJodHRwOi8vcG9zdGx5LmNvbSIsImF1ZCI6Imh0dHA6Ly9wb3N0bHkuY29tIn0.xbi5GizQoqFNK2r5R5ZEpYWauRDR05zEpTgeI_e_sXM
     }
 
     public Task<LoginResponse> Login(LoginUserDto loginUserDto)

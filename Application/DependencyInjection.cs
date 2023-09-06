@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IUserDetailService, UserDetailService>();
         services.AddScoped<IPostcardImageService, PostcardImageService>();
+        services.AddScoped<IPostcardService, PostcardService>();
 
         return services;
     }
