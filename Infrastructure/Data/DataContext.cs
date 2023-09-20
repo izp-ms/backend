@@ -18,6 +18,7 @@ public class DataContext : DbContext
     public DbSet<Postcard> Postcards { get; set; }
     public DbSet<PostcardData> PostcardsImages { get; set; }
     public DbSet<UserPostcard> UserPostcards { get; set; }
+    public DbSet<UserFriends> UserFriends { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,5 +28,6 @@ public class DataContext : DbContext
         modelBuilder.ApplyConfiguration(new UserDetailsEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PostcardDataEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PostcardEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new UserFriendsEntityTypeConfiguration());
     }
 }

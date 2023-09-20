@@ -25,6 +25,7 @@ public static class AutoMapperConfig
             cfg.CreateMap<UserPostcardDto, UserPostcard>();
             cfg.CreateMap<UserPostcard, UserPostcardDto>();
             cfg.CreateMap<PostcardDto, Postcard>();
+
             cfg.CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.NickName, opt => opt.MapFrom(src => src.NickName))
@@ -46,6 +47,7 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.PostcardsSent, opt => opt.MapFrom(src => src.PostcardsSent))
                 .ForMember(dest => dest.PostcardsReceived, opt => opt.MapFrom(src => src.PostcardsReceived))
                 .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Score));
+
             cfg.CreateMap<UserUpdateDto, User>()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UsersDetails.FirstName, opt => opt.MapFrom(src => src.FirstName))
@@ -57,6 +59,43 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.Address.City, opt => opt.MapFrom(src => src.City))
                 .ForMember(dest => dest.Address.Country, opt => opt.MapFrom(src => src.Country))
                 .ForMember(dest => dest.Address.CountryCode, opt => opt.MapFrom(src => src.CountryCode));
+
+            cfg.CreateMap<User, FriendDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.NickName, opt => opt.MapFrom(src => src.NickName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
+            cfg.CreateMap<Address, FriendDto>()
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+                .ForMember(dest => dest.CountryCode, opt => opt.MapFrom(src => src.CountryCode));
+            cfg.CreateMap<UserDetail, FriendDto>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
+                .ForMember(dest => dest.AvatarBase64, opt => opt.MapFrom(src => src.AvatarBase64))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+            cfg.CreateMap<UserStat, FriendDto>()
+                .ForMember(dest => dest.PostcardsSent, opt => opt.MapFrom(src => src.PostcardsSent))
+                .ForMember(dest => dest.PostcardsReceived, opt => opt.MapFrom(src => src.PostcardsReceived))
+                .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Score));
+
+            cfg.CreateMap<UserFriends, FriendDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FriendId))
+                .ForMember(dest => dest.NickName, opt => opt.MapFrom(src => src.Friend.NickName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Friend.Email))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Friend.CreatedAt))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Friend.UsersDetails.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Friend.UsersDetails.LastName))
+                .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.Friend.UsersDetails.BirthDate))
+                .ForMember(dest => dest.AvatarBase64, opt => opt.MapFrom(src => src.Friend.UsersDetails.AvatarBase64))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Friend.UsersDetails.Description))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Friend.Address.City))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Friend.Address.Country))
+                .ForMember(dest => dest.CountryCode, opt => opt.MapFrom(src => src.Friend.Address.CountryCode))
+                .ForMember(dest => dest.PostcardsSent, opt => opt.MapFrom(src => src.Friend.UsersStats.PostcardsSent))
+                .ForMember(dest => dest.PostcardsReceived, opt => opt.MapFrom(src => src.Friend.UsersStats.PostcardsReceived))
+                .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Friend.UsersStats.Score));
         })
             .CreateMapper();
     }
