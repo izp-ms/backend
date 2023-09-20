@@ -43,6 +43,28 @@ public class UserController : ControllerBase
         }
     }
 
+    //[HttpPut]
+    //public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto userUpdateDto)
+    //{
+    //    _logger.Log(LogLevel.Information, "Update user information");
+    //    try
+    //    {
+    //        if (_userContextService.GetUserId != userUpdateDto.Id)
+    //        {
+    //            _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to update user with id: {userUpdateDto.Id}");
+    //            return BadRequest(new { message = "Unauthorized" });
+    //        }
+    //        UserDto updatedUser = await _userService.UpdateUser(userUpdateDto);
+    //        _logger.Log(LogLevel.Information, $"Updated user with id: {updatedUser.Id}");
+    //        return Ok(updatedUser);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.Log(LogLevel.Information, $"Failed to update user information: {ex.Message}");
+    //        return BadRequest(new { message = ex.Message });
+    //    }
+    //}
+
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
     {

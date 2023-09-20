@@ -17,6 +17,7 @@ public class DataContext : DbContext
     public DbSet<Address> Address { get; set; }
     public DbSet<Postcard> Postcards { get; set; }
     public DbSet<PostcardImage> PostcardsImages { get; set; }
+    public DbSet<UserPostcard> UserPostcards { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

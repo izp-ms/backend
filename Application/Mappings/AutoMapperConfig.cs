@@ -52,6 +52,10 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.PostcardsSent, opt => opt.MapFrom(src => src.PostcardsSent))
                 .ForMember(dest => dest.PostcardsReceived, opt => opt.MapFrom(src => src.PostcardsReceived))
                 .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Score));
+            //cfg.CreateMap<UserUpdateDto, User>()
+            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+
+
         })
             .CreateMapper();
     }

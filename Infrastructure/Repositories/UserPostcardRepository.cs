@@ -12,4 +12,11 @@ public class UserPostcardRepository : Repository<UserPostcard>, IUserPostcardRep
     {
         _dataContext = dataContext;
     }
+
+    public async Task<UserPostcard> GetUserPostcardByPostcardId(int postcardId)
+    {
+        var x = _dataContext.UserPostcards.Where(a => a.PostcardId == postcardId).FirstOrDefault();
+        //var xd = await _dataContext.UserPostcards.FirstAsync(x => x.PostcardId == postcardId);
+        return x;
+    }
 }

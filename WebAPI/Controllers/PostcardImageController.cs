@@ -1,23 +1,22 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
 using Application.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PostcardImageController : ControllerBase
 {
     private readonly IPostcardImageService _postcardImageService;
-    private readonly IUserContextService _userContextService;
     private readonly ILogger<PostcardImageController> _logger;
 
     public PostcardImageController(IPostcardImageService postcardImageService, IUserContextService userContextService, ILogger<PostcardImageController> logger)
     {
         _postcardImageService = postcardImageService;
-        _userContextService = userContextService;
         _logger = logger;
     }
 
