@@ -9,5 +9,5 @@ public class Postcard : BaseEntity
     public DateTime CreatedAt { get; set; }
 
     public virtual PostcardImage Image { get; set; }
-    public virtual IEnumerable<UserPostcard> UserPostcards { get; set; } = new List<UserPostcard>();
+    public List<User> Users { get; set; }
 }

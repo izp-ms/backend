@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -15,8 +16,6 @@ public class UserPostcardRepository : Repository<UserPostcard>, IUserPostcardRep
 
     public async Task<UserPostcard> GetUserPostcardByPostcardId(int postcardId)
     {
-        var x = _dataContext.UserPostcards.Where(a => a.PostcardId == postcardId).FirstOrDefault();
-        //var xd = await _dataContext.UserPostcards.FirstAsync(x => x.PostcardId == postcardId);
-        return x;
+        return await _dataContext.UserPostcards.FirstOrDefaultAsync(a => a.PostcardId == postcardId);
     }
 }

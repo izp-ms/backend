@@ -25,11 +25,11 @@ public static class AutoMapperConfig
             cfg.CreateMap<UserPostcardDto, UserPostcard>();
             cfg.CreateMap<UserPostcard, UserPostcardDto>();
             cfg.CreateMap<PostcardDto, Postcard>();
-            cfg.CreateMap<Postcard, PostcardDto>()
-                .ForMember(
-                    dest => dest.UserId,
-                    opt => opt.MapFrom(src => src.UserPostcards.FirstOrDefault().UserId)
-                );
+            //cfg.CreateMap<Postcard, PostcardDto>()
+            //    .ForMember(
+            //        dest => dest.UserId,
+            //        opt => opt.MapFrom(src => src.UserPostcards.FirstOrDefault().UserId)
+            //    );
             cfg.CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.NickName, opt => opt.MapFrom(src => src.NickName))

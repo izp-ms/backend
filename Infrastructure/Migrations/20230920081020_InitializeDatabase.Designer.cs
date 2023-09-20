@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230825114711_CreatePostcards")]
-    partial class CreatePostcards
+    [Migration("20230920081020_InitializeDatabase")]
+    partial class InitializeDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,7 +101,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PostcardImage");
+                    b.ToTable("PostcardsImages");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -148,7 +148,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("AvatarBase64")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<string>("BackgroundBase64")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -170,23 +173,30 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserPostcard", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getutcdate()");
 
                     b.Property<int>("PostcardId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "PostcardId");
+                    b.HasKey("Id");
 
                     b.HasIndex("PostcardId");
 
-                    b.ToTable("UserPostcard");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPostcards");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserStat", b =>
@@ -244,13 +254,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.UserPostcard", b =>
                 {
                     b.HasOne("Domain.Entities.Postcard", "Postcard")
-                        .WithMany("UserPostcards")
+                        .WithMany()
                         .HasForeignKey("PostcardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("UserPostcards")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -271,11 +281,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Postcard", b =>
-                {
-                    b.Navigation("UserPostcards");
-                });
-
             modelBuilder.Entity("Domain.Entities.PostcardImage", b =>
                 {
                     b.Navigation("Postcards");
@@ -284,8 +289,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("Address");
-
-                    b.Navigation("UserPostcards");
 
                     b.Navigation("UsersDetails");
 

@@ -27,6 +27,5 @@ public class DataContext : DbContext
         modelBuilder.ApplyConfiguration(new UserDetailsEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PostcardImageEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PostcardEntityTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new UserPostcardEntityTypeConfiguration());
     }
 }
