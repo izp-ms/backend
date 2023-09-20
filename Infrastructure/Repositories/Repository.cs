@@ -11,6 +11,8 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     private readonly DataContext _dataContext;
     private readonly DbSet<T> _entities;
 
+    private readonly int[] AllowedPageSizes = { 10, 25, 50, 100 };
+
     public Repository(DataContext dataContext)
     {
         _dataContext = dataContext;
@@ -43,6 +45,11 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         if (pageNumber < 0 || pageSize <= 0)
         {
             throw new ArgumentException("Invalid page number or page size.");
+        }
+
+        if (!AllowedPageSizes.Contains(pageSize))
+        {
+            throw new ArgumentException("Invalid page size. Allowed page sizes: 10, 25, 50, 100.");
         }
 
         return await _entities.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();

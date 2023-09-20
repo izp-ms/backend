@@ -4,11 +4,11 @@ using Infrastructure.Data;
 
 namespace Infrastructure.Repositories;
 
-public class PostcardImageRepository : Repository<PostcardImage>, IPostcardImageRepository
+public class PostcardDataRepository : Repository<PostcardData>, IPostcardDataRepository
 {
     private readonly DataContext _dataContext;
 
-    public PostcardImageRepository(DataContext dataContext) : base(dataContext)
+    public PostcardDataRepository(DataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
     }

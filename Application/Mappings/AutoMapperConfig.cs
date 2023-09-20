@@ -20,16 +20,11 @@ public static class AutoMapperConfig
             cfg.CreateMap<Address, AddressDto>();
             cfg.CreateMap<UserDetailDto, UserDetail>();
             cfg.CreateMap<UserDetail, UserDetailDto>();
-            cfg.CreateMap<PostcardImageDto, PostcardImage>();
-            cfg.CreateMap<PostcardImage, PostcardImageDto>();
+            cfg.CreateMap<PostcardDataDto, PostcardData>();
+            cfg.CreateMap<PostcardData, PostcardDataDto>();
             cfg.CreateMap<UserPostcardDto, UserPostcard>();
             cfg.CreateMap<UserPostcard, UserPostcardDto>();
             cfg.CreateMap<PostcardDto, Postcard>();
-            //cfg.CreateMap<Postcard, PostcardDto>()
-            //    .ForMember(
-            //        dest => dest.UserId,
-            //        opt => opt.MapFrom(src => src.UserPostcards.FirstOrDefault().UserId)
-            //    );
             cfg.CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.NickName, opt => opt.MapFrom(src => src.NickName))
@@ -37,7 +32,6 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
             cfg.CreateMap<Address, UserDto>()
-                .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.ZipCode))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
                 .ForMember(dest => dest.CountryCode, opt => opt.MapFrom(src => src.CountryCode));
@@ -52,10 +46,17 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.PostcardsSent, opt => opt.MapFrom(src => src.PostcardsSent))
                 .ForMember(dest => dest.PostcardsReceived, opt => opt.MapFrom(src => src.PostcardsReceived))
                 .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Score));
-            //cfg.CreateMap<UserUpdateDto, User>()
-            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-
-
+            cfg.CreateMap<UserUpdateDto, User>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UsersDetails.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.UsersDetails.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.UsersDetails.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
+                .ForMember(dest => dest.UsersDetails.AvatarBase64, opt => opt.MapFrom(src => src.AvatarBase64))
+                .ForMember(dest => dest.UsersDetails.BackgroundBase64, opt => opt.MapFrom(src => src.BackgroundBase64))
+                .ForMember(dest => dest.UsersDetails.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Address.City, opt => opt.MapFrom(src => src.City))
+                .ForMember(dest => dest.Address.Country, opt => opt.MapFrom(src => src.Country))
+                .ForMember(dest => dest.Address.CountryCode, opt => opt.MapFrom(src => src.CountryCode));
         })
             .CreateMapper();
     }

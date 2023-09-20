@@ -23,7 +23,7 @@ public class DataSeeder
 
         if (!_dataContext.PostcardsImages.Any())
         {
-            _dataContext.PostcardsImages.AddRange(PostcardSeeder.GetPostcardImagesSeeder());
+            _dataContext.PostcardsImages.AddRange(PostcardSeeder.GetPostcardDataSeeder());
         }
 
         _dataContext.SaveChanges();
