@@ -5,3 +5,7 @@ Create new migration:
 3. Add-Migration <InitialCreate>
 4. Update-Database
 *. Remove-Migration
+
+Run project:
+1. Move to src\WebAPI
+2. dotnet run
