@@ -22,11 +22,54 @@ public class UserController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet]
-    public Task<IActionResult> Test()
+    [HttpGet("test")]
+    public IActionResult Test()
     {
-        var response = new { hello = "Hello" };
-        return Task.FromResult<IActionResult>(Ok(response));
+        return Ok("Test");
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetUser()
+    {
+        _logger.Log(LogLevel.Information, "Get user information");
+        try
+        {
+            if (_userContextService.GetUserId == null)
+            {
+                _logger.Log(LogLevel.Information, "Unauthorized");
+                return BadRequest(new { message = "Unauthorized" });
+            }
+            UserDto userData = await _userService.GetUser();
+            return Ok(userData);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to get user information: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto userUpdateDto)
+    {
+        _logger.Log(LogLevel.Information, "Update user information");
+        try
+        {
+            if (_userContextService.GetUserId != userUpdateDto.Id)
+            {
+                _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to update user with id: {userUpdateDto.Id}");
+                return BadRequest(new { message = "Unauthorized" });
+            }
+            UserUpdateDto updatedUser = await _userService.UpdateUser(userUpdateDto);
+            _logger.Log(LogLevel.Information, $"Updated user with id: {updatedUser.Id}");
+            return Ok(updatedUser);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to update user information: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPost("register")]

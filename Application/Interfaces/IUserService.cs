@@ -9,6 +9,6 @@ public interface IUserService
     Task<RegisterResponse> Register(RegisterUserDto registerUserDto);
     Task<LoginResponse> Login(LoginUserDto loginUserDto);
     Task<User> DeleteUser(int userId);
-
-    Task<IEnumerable<User>> GetAll();
+    Task<UserDto> GetUser();
+    Task<UserUpdateDto> UpdateUser(UserUpdateDto userUpdateDto);
 }

@@ -14,6 +14,7 @@ namespace Application.Services;
 
 public class UserService : IUserService
 {
+    private readonly IUserContextService _userContextService;
     private readonly IUserRepository _userRepository;
     private readonly IUserStatsRepository _userStatsRepository;
     private readonly IUserDetailRepository _userDetailRepository;
@@ -22,6 +23,7 @@ public class UserService : IUserService
     private readonly IPasswordHasher<User> _passwordHasher;
 
     public UserService(
+        IUserContextService contextService,
         IUserRepository userRepository,
         IUserStatsRepository userStatsRepository,
         IUserDetailRepository userDetailRepository,
@@ -30,6 +32,7 @@ public class UserService : IUserService
         IPasswordHasher<User> passwordHasher
         )
     {
+        _userContextService = contextService;
         _userRepository = userRepository;
         _userStatsRepository = userStatsRepository;
         _userDetailRepository = userDetailRepository;
@@ -38,9 +41,18 @@ public class UserService : IUserService
         _passwordHasher = passwordHasher;
     }
 
-    public Task<IEnumerable<User>> GetAll()
+    public async Task<UserDto> GetUser()
     {
-        return _userRepository.GetAll();
+        User user = await _userRepository.Get(_userContextService.GetUserId ?? 0) ?? throw new Exception("User not found");
+        Address address = await _addressRepository.Get(user.Id) ?? throw new Exception("Address not found");
+        UserDetail userDetail = await _userDetailRepository.Get(user.Id) ?? throw new Exception("User detail not found");
+        UserStat userStat = await _userStatsRepository.Get(user.Id) ?? throw new Exception("User stat not found");
+
+        UserDto userDto = _mapper.Map<UserDto>(user);
+        _mapper.Map(address, userDto);
+        _mapper.Map(userDetail, userDto);
+        _mapper.Map(userStat, userDto);
+        return userDto;
     }
 
     public Task<LoginResponse> Login(LoginUserDto loginUserDto)
@@ -127,5 +139,22 @@ public class UserService : IUserService
         {
             throw;
         }
+    }
+
+    public async Task<UserUpdateDto> UpdateUser(UserUpdateDto userUpdateDto)
+    {
+        User user = await _userRepository.Get(userUpdateDto.Id) ?? throw new Exception("User not found");
+        UserDetail userDetail = await _userDetailRepository.Get(userUpdateDto.Id) ?? throw new Exception("User detail not found");
+        Address address = await _addressRepository.Get(userUpdateDto.Id) ?? throw new Exception("Address not found");
+
+        _mapper.Map(userUpdateDto, user);
+        _mapper.Map(userUpdateDto, userDetail);
+        _mapper.Map(userUpdateDto, address);
+
+        await _userRepository.Update(user);
+        await _userDetailRepository.Update(userDetail);
+        await _addressRepository.Update(address);
+
+        return userUpdateDto;
     }
 }

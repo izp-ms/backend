@@ -18,6 +18,24 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
             .WithOne(p => p.User)
             .HasForeignKey<UserDetail>(p => p.Id);
 
+        builder.HasMany(p => p.Postcards)
+            .WithMany(p => p.Users)
+            .UsingEntity<UserPostcard>(
+                p => p.HasOne(u => u.Postcard)
+                .WithMany()
+                .HasForeignKey(u => u.PostcardId),
+
+                p => p.HasOne(u => u.User)
+                .WithMany()
+                .HasForeignKey(u => u.UserId),
+
+                p =>
+                {
+                    p.HasKey(x => x.Id);
+                    p.Property(x => x.CreatedAt).HasDefaultValueSql("getutcdate()");
+                }
+            );
+
         builder.Property(p => p.Email).IsRequired().HasMaxLength(320);
         builder.Property(p => p.Password).IsRequired().HasMaxLength(255);
         builder.Property(p => p.NickName).IsRequired().HasMaxLength(32);
