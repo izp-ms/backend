@@ -8,7 +8,7 @@ public class PostcardEntityTypeConfiguration : IEntityTypeConfiguration<Postcard
 {
     public void Configure(EntityTypeBuilder<Postcard> builder)
     {
-        builder.HasOne(p => p.Image)
+        builder.HasOne(p => p.PostcardData)
             .WithMany(p => p.Postcards)
             .HasForeignKey(p => p.ImageId);
 

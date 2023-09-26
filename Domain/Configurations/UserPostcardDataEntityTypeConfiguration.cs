@@ -13,5 +13,6 @@ public class PostcardDataEntityTypeConfiguration : IEntityTypeConfiguration<Post
         builder.Property(p => p.City).HasMaxLength(100).IsRequired();
         builder.Property(p => p.Latitude).HasMaxLength(12).IsRequired();
         builder.Property(p => p.Longitude).HasMaxLength(12).IsRequired();
+        builder.Property(p => p.CollectRangeInMeters).IsRequired();
     }
 }

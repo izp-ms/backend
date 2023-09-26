@@ -10,7 +10,7 @@ public class SwaggerInstaller : IInstaller
         services.AddSwaggerGen(c =>
         {
             c.EnableAnnotations();
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Postly", Version = "0.1.0" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Postcardia", Version = "0.2.0" });
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
             {
                 Name = "Authorization",

@@ -19,7 +19,6 @@ public class FriendDto : IMap
 
     public string City { get; set; }
     public string Country { get; set; }
-    public string CountryCode { get; set; }
 
     public int PostcardsSent { get; set; }
     public int PostcardsReceived { get; set; }

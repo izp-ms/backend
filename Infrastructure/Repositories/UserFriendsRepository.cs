@@ -14,9 +14,14 @@ public class UserFriendsRepository : Repository<UserFriends>, IUserFriendsReposi
         _dataContext = dataContext;
     }
 
-    public async Task<IEnumerable<UserFriends>> GetFriends(int userId)
+    public async Task<IEnumerable<UserFriends>> GetFollowing(int userId)
     {
         return await _dataContext.UserFriends.Where(uf => uf.UserId == userId).ToListAsync();
+    }
+
+    public async Task<IEnumerable<UserFriends>> GetFollowers(int userId)
+    {
+        return await _dataContext.UserFriends.Where(uf => uf.FriendId == userId).ToListAsync();
     }
 
     public async Task<UserFriends> GetByUserIdAndFriendId(int userId, int friendId)

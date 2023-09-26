@@ -19,6 +19,7 @@ public class UserService : IUserService
     private readonly IUserStatsRepository _userStatsRepository;
     private readonly IUserDetailRepository _userDetailRepository;
     private readonly IAddressRepository _addressRepository;
+    private readonly IUserFriendsRepository _userFriendsRepository;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
@@ -28,6 +29,7 @@ public class UserService : IUserService
         IUserStatsRepository userStatsRepository,
         IUserDetailRepository userDetailRepository,
         IAddressRepository addressRepository,
+        IUserFriendsRepository userFriendsRepository,
         IMapper mapper,
         IPasswordHasher<User> passwordHasher
         )
@@ -37,21 +39,33 @@ public class UserService : IUserService
         _userStatsRepository = userStatsRepository;
         _userDetailRepository = userDetailRepository;
         _addressRepository = addressRepository;
+        _userFriendsRepository = userFriendsRepository;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<UserDto> GetUser()
+    public async Task<UserDto> GetUser(int userId)
     {
-        User user = await _userRepository.Get(_userContextService.GetUserId ?? 0) ?? throw new Exception("User not found");
-        Address address = await _addressRepository.Get(user.Id) ?? throw new Exception("Address not found");
-        UserDetail userDetail = await _userDetailRepository.Get(user.Id) ?? throw new Exception("User detail not found");
-        UserStat userStat = await _userStatsRepository.Get(user.Id) ?? throw new Exception("User stat not found");
+        User user = await _userRepository.Get(userId) ?? throw new Exception("User not found");
+        Address address = await _addressRepository.Get(userId) ?? throw new Exception("Address not found");
+        UserDetail userDetail = await _userDetailRepository.Get(userId) ?? throw new Exception("User detail not found");
+        UserStat userStat = await _userStatsRepository.Get(userId) ?? throw new Exception("User stat not found");
 
         UserDto userDto = _mapper.Map<UserDto>(user);
         _mapper.Map(address, userDto);
         _mapper.Map(userDetail, userDto);
         _mapper.Map(userStat, userDto);
+
+        int postcardsCount = user.Postcards.Count();
+        IEnumerable<UserFriends> followersUsers = await _userFriendsRepository.GetFollowers(userId);
+        int followersCount = followersUsers.Count();
+        IEnumerable<UserFriends> followingUsers = await _userFriendsRepository.GetFollowing(userId);
+        int followingCount = followingUsers.Count();
+
+        userDto.PostcardsCount = postcardsCount;
+        userDto.FollowersCount = followersCount;
+        userDto.FollowingCount = followingCount;
+
         return userDto;
     }
 

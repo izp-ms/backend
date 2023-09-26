@@ -39,7 +39,7 @@ public class PostcardService : IPostcardService
         {
             UserId = postcardDto.UserId,
             PostcardId = newPostcard.Id,
-            CreatedAt = DateTime.UtcNow,
+            ReceivedAt = DateTime.UtcNow,
         };
         await _userPostcardRepository.Insert(userPostcard);
         return _mapper.Map<PostcardDto>(newPostcard);

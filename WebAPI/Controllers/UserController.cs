@@ -30,17 +30,12 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetUser()
+    public async Task<IActionResult> GetUser([FromQuery] int userId)
     {
         _logger.Log(LogLevel.Information, "Get user information");
         try
         {
-            if (_userContextService.GetUserId == null)
-            {
-                _logger.Log(LogLevel.Information, "Unauthorized");
-                return BadRequest(new { message = "Unauthorized" });
-            }
-            UserDto userData = await _userService.GetUser();
+            UserDto userData = await _userService.GetUser(userId);
             return Ok(userData);
         }
         catch (Exception ex)

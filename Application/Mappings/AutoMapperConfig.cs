@@ -30,12 +30,10 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.NickName, opt => opt.MapFrom(src => src.NickName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
             cfg.CreateMap<Address, UserDto>()
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
-                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
-                .ForMember(dest => dest.CountryCode, opt => opt.MapFrom(src => src.CountryCode));
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country));
             cfg.CreateMap<UserDetail, UserDto>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
@@ -57,8 +55,7 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.UsersDetails.BackgroundBase64, opt => opt.MapFrom(src => src.BackgroundBase64))
                 .ForMember(dest => dest.UsersDetails.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Address.City, opt => opt.MapFrom(src => src.City))
-                .ForMember(dest => dest.Address.Country, opt => opt.MapFrom(src => src.Country))
-                .ForMember(dest => dest.Address.CountryCode, opt => opt.MapFrom(src => src.CountryCode));
+                .ForMember(dest => dest.Address.Country, opt => opt.MapFrom(src => src.Country));
 
             cfg.CreateMap<User, FriendDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -67,8 +64,7 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
             cfg.CreateMap<Address, FriendDto>()
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
-                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
-                .ForMember(dest => dest.CountryCode, opt => opt.MapFrom(src => src.CountryCode));
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country));
             cfg.CreateMap<UserDetail, FriendDto>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
@@ -92,7 +88,6 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Friend.UsersDetails.Description))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Friend.Address.City))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Friend.Address.Country))
-                .ForMember(dest => dest.CountryCode, opt => opt.MapFrom(src => src.Friend.Address.CountryCode))
                 .ForMember(dest => dest.PostcardsSent, opt => opt.MapFrom(src => src.Friend.UsersStats.PostcardsSent))
                 .ForMember(dest => dest.PostcardsReceived, opt => opt.MapFrom(src => src.Friend.UsersStats.PostcardsReceived))
                 .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Friend.UsersStats.Score));

@@ -7,6 +7,7 @@ public class PostcardData : BaseEntity
     public string City { get; set; }
     public string Longitude { get; set; }
     public string Latitude { get; set; }
+    public int CollectRangeInMeters { get; set; }
 
     public virtual IEnumerable<Postcard> Postcards { get; set; } = new List<Postcard>();
 }

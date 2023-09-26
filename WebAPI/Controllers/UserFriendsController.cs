@@ -22,18 +22,18 @@ public class UserFriendsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetFriendsByUserId(int id)
+    public async Task<IActionResult> GetFollowingByUserId(int id)
     {
-        _logger.Log(LogLevel.Information, "Get friends");
+        _logger.Log(LogLevel.Information, "Get following");
         try
         {
-            IEnumerable<FriendDto> friends = await _userFriendsService.GetFriends(id);
-            return Ok(friends);
+            IEnumerable<FriendDto> following = await _userFriendsService.GetFollowing(id);
+            return Ok(following);
         }
         catch (Exception ex)
         {
-            _logger.Log(LogLevel.Information, $"Failed to get friends: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get friends: {ex.Message}" });
+            _logger.Log(LogLevel.Information, $"Failed to get following: {ex.Message}");
+            return BadRequest(new { message = $"Failed to get following: {ex.Message}" });
         }
     }
 
