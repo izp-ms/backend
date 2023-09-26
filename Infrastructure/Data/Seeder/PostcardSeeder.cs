@@ -15,6 +15,7 @@ public class PostcardSeeder
                 City = "Gliwice",
                 Longitude = "18.6713802",
                 Latitude = "50.2944923",
+                CollectRangeInMeters = 1000,
             },
             new PostcardData()
             {
@@ -23,6 +24,7 @@ public class PostcardSeeder
                 City = "Katowice",
                 Longitude = "19.039993",
                 Latitude = "50.270908",
+                CollectRangeInMeters = 1000,
             },
             new PostcardData()
             {
@@ -31,6 +33,7 @@ public class PostcardSeeder
                 City = "Rybnik",
                 Longitude = "18.5462847",
                 Latitude = "50.1021742",
+                CollectRangeInMeters = 1000,
             },
             new PostcardData()
             {
@@ -39,6 +42,7 @@ public class PostcardSeeder
                 City = "Mikołów",
                 Longitude = "18.9041",
                 Latitude = "50.17103",
+                CollectRangeInMeters = 1000,
             }
         };
         return postcardData;

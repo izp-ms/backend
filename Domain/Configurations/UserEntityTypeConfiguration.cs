@@ -32,7 +32,7 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
                 p =>
                 {
                     p.HasKey(x => x.Id);
-                    p.Property(x => x.CreatedAt).HasDefaultValueSql("getutcdate()");
+                    p.Property(x => x.ReceivedAt).HasDefaultValueSql("getutcdate()");
                 }
             );
 

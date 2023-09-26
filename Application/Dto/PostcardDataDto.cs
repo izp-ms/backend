@@ -12,6 +12,7 @@ public class PostcardDataDto : IMap
     public string City { get; set; }
     public string Longitude { get; set; }
     public string Latitude { get; set; }
+    public int CollectRangeInMeters { get; set; }
 
     public void Mapping(Profile profile)
     {

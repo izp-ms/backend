@@ -32,12 +32,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<T> Get(int Id)
     {
-        return await _entities.SingleOrDefaultAsync(e => e.Id == Id);
+        return await _entities.AsNoTracking().SingleOrDefaultAsync(e => e.Id == Id);
     }
 
     public async Task<IEnumerable<T>> GetAll()
     {
-        return await _entities.ToListAsync();
+        return await _entities.AsNoTracking().ToListAsync();
     }
 
     public async Task<IEnumerable<T>> GetPagination(int pageNumber, int pageSize)

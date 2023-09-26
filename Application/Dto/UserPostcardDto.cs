@@ -7,7 +7,7 @@ public class UserPostcardDto : IMap
     public int Id { get; set; }
     public int UserId { get; set; }
     public int PostcardId { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime ReceivedAt { get; set; }
 
     public void Mapping(Profile profile)
     {

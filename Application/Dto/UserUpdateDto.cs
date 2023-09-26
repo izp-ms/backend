@@ -15,7 +15,6 @@ public class UserUpdateDto : IMap
   public string Description { get; set; }
   public string Country { get; set; }
   public string City { get; set; }
-  public string CountryCode { get; set; }
 
 
   public void Mapping(Profile profile)

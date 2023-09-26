@@ -8,6 +8,6 @@ public class Postcard : BaseEntity
     public string Type { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    public virtual PostcardData Image { get; set; }
-    public List<User> Users { get; set; }
+    public virtual PostcardData PostcardData { get; set; }
+    public IEnumerable<User> Users { get; set; } = new List<User>();
 }

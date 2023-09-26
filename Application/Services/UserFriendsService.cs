@@ -17,9 +17,9 @@ public class UserFriendsService : IUserFriendsService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<FriendDto>> GetFriends(int userId)
+    public async Task<IEnumerable<FriendDto>> GetFollowing(int userId)
     {
-        IEnumerable<UserFriends> userFriends = await _userFriendsRepository.GetFriends(userId);
+        IEnumerable<UserFriends> userFriends = await _userFriendsRepository.GetFollowing(userId);
         return _mapper.Map<IEnumerable<FriendDto>>(userFriends);
     }
 
