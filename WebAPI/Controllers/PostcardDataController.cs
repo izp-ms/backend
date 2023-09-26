@@ -54,6 +54,23 @@ public class PostcardDataController : ControllerBase
         }
     }
 
+
+    [HttpPost("NewPostcard")]
+    public async Task<IActionResult> GetNewPostcard([FromBody] CoordinateRequest coordinateRequest)
+    {
+        _logger.Log(LogLevel.Information, "Get new postcard data");
+        try
+        {
+            CurrentLocationPostcardsResponse response = await _postcardDataService.GetPostcardsNearby(coordinateRequest);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to get new postcard data: {ex.Message}");
+            return BadRequest(new { message = $"Failed to get new postcard data: {ex.Message}" });
+        }
+    }
+
     [HttpDelete]
     public async Task<IActionResult> DeletePostcardData([FromQuery] int postcardDataId)
     {

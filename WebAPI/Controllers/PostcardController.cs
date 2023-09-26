@@ -72,7 +72,7 @@ public class PostcardController : ControllerBase
         }
     }
 
-    [HttpPut("transfer")]
+    [HttpPut("Transfer")]
     public async Task<IActionResult> TransferPostcard([FromBody] TransferPostcardRequest transferPostcardRequest)
     {
         _logger.Log(LogLevel.Information, "Transfer postcard");

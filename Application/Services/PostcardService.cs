@@ -1,6 +1,7 @@
 using Application.Dto;
 using Application.Interfaces;
 using Application.Response;
+using Application.Validators;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -12,17 +13,20 @@ public class PostcardService : IPostcardService
     private readonly IPostcardRepository _postcardRepository;
     private readonly IUserPostcardRepository _userPostcardRepository;
     private readonly IUserContextService _userContextService;
+    private readonly IUserStatsService _userStatsService;
     private readonly IMapper _mapper;
 
     public PostcardService(
         IUserPostcardRepository userPostcardRepository,
         IPostcardRepository postcardRepository,
         IUserContextService userContextService,
+        IUserStatsService userStatsService,
         IMapper mapper)
     {
         _userPostcardRepository = userPostcardRepository;
         _postcardRepository = postcardRepository;
         _userContextService = userContextService;
+        _userStatsService = userStatsService;
         _mapper = mapper;
     }
 
@@ -88,10 +92,27 @@ public class PostcardService : IPostcardService
     public async Task<UserPostcardDto> TransferPostcard(int postcardId, int newUserId)
     {
         UserPostcard userPostcard = await _userPostcardRepository.GetUserPostcardByPostcardId(postcardId);
-        if (userPostcard == null)
+        if (!PostcardTransferValidator.IsPostcardValid(userPostcard, newUserId, _userContextService.GetUserId))
         {
-            throw new Exception("Postcard not found");
+            throw new Exception("Postcard is not valid");
         }
+
+        UserStatDto sender = await _userStatsService.GetUserStatsById(_userContextService.GetUserId ?? userPostcard.UserId);
+        UserStatDto receiver = await _userStatsService.GetUserStatsById(newUserId);
+
+        if (!PostcardTransferValidator.IsSenderAndReceiverValid(sender, receiver))
+        {
+            throw new Exception("User not found");
+        }
+
+        sender.PostcardsSent++;
+        sender.Score++;
+        receiver.PostcardsReceived++;
+        receiver.Score++;
+
+        await _userStatsService.UpdateUserStats(sender);
+        await _userStatsService.UpdateUserStats(receiver);
+
         userPostcard.UserId = newUserId;
         UserPostcard updatedUserPostcard = await _userPostcardRepository.Update(userPostcard);
         return _mapper.Map<UserPostcardDto>(updatedUserPostcard);
