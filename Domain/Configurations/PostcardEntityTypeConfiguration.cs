@@ -10,7 +10,7 @@ public class PostcardEntityTypeConfiguration : IEntityTypeConfiguration<Postcard
     {
         builder.HasOne(p => p.PostcardData)
             .WithMany(p => p.Postcards)
-            .HasForeignKey(p => p.ImageId);
+            .HasForeignKey(p => p.PostcardDataId);
 
         builder.Property(p => p.Title).HasMaxLength(50).IsRequired();
         builder.Property(p => p.Content).HasMaxLength(280).IsRequired();

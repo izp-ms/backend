@@ -21,9 +21,9 @@ public class DataSeeder
             _dataContext.Users.AddRange(UserSeeder.GetUsersSeeder());
         }
 
-        if (!_dataContext.PostcardsImages.Any())
+        if (!_dataContext.PostcardData.Any())
         {
-            _dataContext.PostcardsImages.AddRange(PostcardSeeder.GetPostcardDataSeeder());
+            _dataContext.PostcardData.AddRange(PostcardSeeder.GetPostcardDataSeeder());
         }
 
         _dataContext.SaveChanges();
