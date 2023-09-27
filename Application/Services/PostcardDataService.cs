@@ -119,7 +119,7 @@ public class PostcardDataService : IPostcardDataService
         IEnumerable<Postcard> postcards = await _postcardRepository.GetAll();
         foreach (Postcard postcard in postcards)
         {
-            if (postcard.ImageId == postcardDataId)
+            if (postcard.PostcardDataId == postcardDataId)
             {
                 throw new Exception($"Postcard data with id: {postcardDataId} is used by postcard with id: {postcard.Id}");
             }

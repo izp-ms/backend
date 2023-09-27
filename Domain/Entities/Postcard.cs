@@ -4,7 +4,7 @@ public class Postcard : BaseEntity
 {
     public string Title { get; set; }
     public string Content { get; set; }
-    public int ImageId { get; set; }
+    public int PostcardDataId { get; set; }
     public string Type { get; set; }
     public DateTime CreatedAt { get; set; }
 
