@@ -21,41 +21,43 @@ public class DataSeeder
             _dataContext.Users.AddRange(UserSeeder.GetUsersSeeder());
         }
         _dataContext.SaveChanges();
+
+
         if (!_dataContext.PostcardData.Any())
         {
             _dataContext.PostcardData.AddRange(PostcardDataSeeder.GetPostcardDataSeeder());
         }
         _dataContext.SaveChanges();
+
         if (!_dataContext.Postcards.Any())
         {
-            _dataContext.Postcards.AddRange(PostcardSeeder.GetPostcardSeeder());
+            _dataContext.Postcards.AddRange(PostcardSeeder.GetPostcardSeeder(_dataContext));
         }
         _dataContext.SaveChanges();
         if (!_dataContext.UsersDetails.Any())
         {
-            _dataContext.UsersDetails.AddRange(UserDetailSeeder.GetUsersDetailsSeeder());
+            _dataContext.UsersDetails.AddRange(UserDetailSeeder.GetUsersDetailsSeeder(_dataContext));
         }
         _dataContext.SaveChanges();
         if (!_dataContext.UsersStats.Any())
         {
-            _dataContext.UsersStats.AddRange(UserStatSeeder.GetUsersSeeder());
+            _dataContext.UsersStats.AddRange(UserStatSeeder.GetUsersStatSeeder(_dataContext));
         }
         _dataContext.SaveChanges();
         if (!_dataContext.Address.Any())
         {
-            _dataContext.Address.AddRange(AddressSeeder.GetAddressSeeder());
+            _dataContext.Address.AddRange(AddressSeeder.GetAddressSeeder(_dataContext));
         }
         _dataContext.SaveChanges();
         if (!_dataContext.UserPostcards.Any())
         {
-            _dataContext.UserPostcards.AddRange(UserPostcardSeeder.GetUserPostcardsSeeder());
+            _dataContext.UserPostcards.AddRange(UserPostcardSeeder.GetUserPostcardsSeeder(_dataContext));
         }
         _dataContext.SaveChanges();
         if (!_dataContext.UserFriends.Any())
         {
-            _dataContext.UserFriends.AddRange(UserFriendSeeder.GetUserFriendsSeeder());
+            _dataContext.UserFriends.AddRange(UserFriendSeeder.GetUserFriendsSeeder(_dataContext));
         }
-
         _dataContext.SaveChanges();
     }
 }

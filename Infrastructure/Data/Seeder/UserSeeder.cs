@@ -8,7 +8,7 @@ public class UserSeeder
     {
         IEnumerable<User> users = new List<User>()
         {
-            new User()// ID: 1
+            new User()// ID: 0
             {
                 NickName = "AdminUser",
                 Email = "admin@email.com",
@@ -17,7 +17,7 @@ public class UserSeeder
                 Role = "ADMIN",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 2
+            new User()// ID: 1
             {
                 NickName = "Admin2",
                 Email = "admin2@email.com",
@@ -26,7 +26,7 @@ public class UserSeeder
                 Role = "ADMIN",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 3
+            new User()// ID: 2
             {
                 NickName = "Oltaracel",
                 Email = "john.doe@email.com",
@@ -35,7 +35,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 4
+            new User()// ID: 3
             {
                 NickName = "Tananicol",
                 Email = "jane.smith@email.com",
@@ -44,7 +44,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 5
+            new User()// ID: 4
             {
                 NickName = "Suel",
                 Email = "mike.johnson@email.com",
@@ -53,7 +53,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 6
+            new User()// ID: 5
             {
                 NickName = "Valance",
                 Email = "sarah.brown@email.com",
@@ -62,7 +62,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 7
+            new User()// ID: 6
             {
                 NickName = "DavDavoo",
                 Email = "david.wilson@email.com",
@@ -71,7 +71,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 8
+            new User()// ID: 7
             {
                 NickName = "Charllia",
                 Email = "emily.taylor@email.com",
@@ -80,7 +80,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 9
+            new User()// ID: 8
             {
                 NickName = "Dan",
                 Email = "daniel.davis@email.com",
@@ -89,7 +89,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 10
+            new User()// ID: 9
             {
                 NickName = "Oxonomy",
                 Email = "olivia.clark@email.com",
@@ -98,7 +98,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 11
+            new User()// ID: 10
             {
                 NickName = "Protesian",
                 Email = "michael.martinez@email.com",
@@ -107,7 +107,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 12
+            new User()// ID: 11
             {
                 NickName = "Robotik",
                 Email = "sophia.lewis@email.com",
@@ -116,7 +116,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 13
+            new User()// ID: 12
             {
                 NickName = "Gigadude",
                 Email = "william.brown@email.com",
@@ -125,7 +125,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 14
+            new User()// ID: 13
             {
                 NickName = "Slyrack",
                 Email = "ava.johnson@email.com",
@@ -134,7 +134,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 15
+            new User()// ID: 14
             {
                 NickName = "Kerplunk",
                 Email = "james.smith@email.com",
@@ -143,7 +143,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 16
+            new User()// ID: 15
             {
                 NickName = "Synnetan",
                 Email = "emma.wilson@email.com",
@@ -152,7 +152,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 17
+            new User()// ID: 16
             {
                 NickName = "Wrian",
                 Email = "daniel.jones@email.com",
@@ -161,7 +161,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 18
+            new User()// ID: 17
             {
                 NickName = "Boone",
                 Email = "oliver.smith@email.com",
@@ -170,7 +170,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 19
+            new User()// ID: 18
             {
                 NickName = "Cothurnal",
                 Email = "sophia.davis@email.com",
@@ -179,7 +179,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 20
+            new User()// ID: 19
             {
                 NickName = "NarcCop",
                 Email = "matthew.johnson@email.com",
@@ -188,7 +188,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 21
+            new User()// ID: 20
             {
                 NickName = "Octopi",
                 Email = "amelia.clark@email.com",
@@ -197,7 +197,7 @@ public class UserSeeder
                 Role = "USER",
                 CreatedAt = DateTime.Now,
             },
-            new User()// ID: 22
+            new User()// ID: 21
             {
                 NickName = "Capitulation",
                 Email = "ethan.taylor@email.com",
