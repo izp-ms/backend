@@ -12,14 +12,14 @@ public class MappingProfile : Profile
 
     private void ApplyMappingFromAssembly(Assembly assembly)
     {
-        var types = assembly.GetExportedTypes()
+        List<Type> types = assembly.GetExportedTypes()
             .Where(x => typeof(IMap).IsAssignableFrom(x) && !x.IsInterface)
             .ToList();
 
-        foreach (var type in types)
+        foreach (Type type in types)
         {
-            var instance = Activator.CreateInstance(type);
-            var methodInfo = type.GetMethod("Mapping");
+            object instance = Activator.CreateInstance(type);
+            MethodInfo methodInfo = type.GetMethod("Mapping");
             methodInfo?.Invoke(instance, new object[] { this });
         }
     }
