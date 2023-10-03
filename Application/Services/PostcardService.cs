@@ -61,15 +61,24 @@ public class PostcardService : IPostcardService
         return _mapper.Map<PostcardDto>(postcard);
     }
 
-    public async Task<PaginationResponse<PostcardDto>> GetPagination(PaginationRequest paginationRequest)
+    public async Task<PaginationResponse<PostcardDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
     {
-        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAll();
-        IEnumerable<Postcard> postcards = await _postcardRepository.GetPagination(paginationRequest.PageNumber, paginationRequest.PageSize);
-        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)paginationRequest.PageSize);
+        if (postcardPaginationRequest.UserId == null || _userContextService.GetUserId == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId((int)postcardPaginationRequest.UserId);
+        IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(
+            postcardPaginationRequest.PageNumber,
+            postcardPaginationRequest.PageSize,
+            (int)postcardPaginationRequest.UserId);
+
+        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)postcardPaginationRequest.PageSize);
         PaginationResponse<PostcardDto> paginationResponse = new PaginationResponse<PostcardDto>()
         {
-            PageNumber = paginationRequest.PageNumber,
-            PageSize = paginationRequest.PageSize,
+            PageNumber = postcardPaginationRequest.PageNumber,
+            PageSize = postcardPaginationRequest.PageSize,
             TotalCount = allPostcards.Count(),
             TotalPages = totalPages,
             Content = _mapper.Map<IEnumerable<Postcard>, IEnumerable<PostcardDto>>(postcards)
