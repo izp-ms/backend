@@ -4,7 +4,7 @@
 
 1. Based on <b>appsettings.Development.template.json</b> and <b>appsettings.Production.template.json</b> create <b>appsettings.Development.json</b> and <b>appsettings.Production.json</b>
 2. Set connection string in appsettings.Development.json
-3. Update database: ` dotnet ef database update`` or  `Update-Database`
+3. Update database: `dotnet ef database update` or  `Update-Database`
 
 ### Run project:
 

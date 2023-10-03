@@ -80,12 +80,7 @@ public class PostcardService : IPostcardService
 
     public async Task<PostcardDto> GetPostcardById(int postcardId)
     {
-        Postcard postcard = await _postcardRepository.Get(postcardId);
-        if (postcard == null)
-        {
-            throw new Exception("Postcard not found");
-        }
-
+        Postcard postcard = await _postcardRepository.Get(postcardId) ?? throw new Exception("Postcard not found");
         return _mapper.Map<PostcardDto>(postcard);
     }
 
@@ -97,8 +92,14 @@ public class PostcardService : IPostcardService
             throw new Exception("Postcard is not valid");
         }
 
+        PostcardDto postcard = await GetPostcardById(postcardId);
         UserStatDto sender = await _userStatsService.GetUserStatsById(_userContextService.GetUserId ?? userPostcard.UserId);
         UserStatDto receiver = await _userStatsService.GetUserStatsById(newUserId);
+
+        if (postcard.IsSent)
+        {
+            throw new Exception("Postcard already received by user");
+        }
 
         if (!PostcardTransferValidator.IsSenderAndReceiverValid(sender, receiver))
         {
@@ -109,7 +110,9 @@ public class PostcardService : IPostcardService
         sender.Score++;
         receiver.PostcardsReceived++;
         receiver.Score++;
+        postcard.IsSent = true;
 
+        await UpdatePostcard(postcard);
         await _userStatsService.UpdateUserStats(sender);
         await _userStatsService.UpdateUserStats(receiver);
 

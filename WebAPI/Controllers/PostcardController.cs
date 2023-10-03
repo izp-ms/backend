@@ -30,10 +30,10 @@ public class PostcardController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedPostcards([FromQuery] int pageNumber, [FromQuery] int pageSize)
+    public async Task<IActionResult> GetPaginatedPostcards([FromQuery] int pageNumber, [FromQuery] int pageSize, [FromQuery] int userId)
     {
         _logger.Log(LogLevel.Information, "Get postcards");
-        string cacheKey = $"postcard-{pageNumber}-{pageSize}-{_userContextService.GetUserId}";
+        string cacheKey = $"postcard-{pageNumber}-{pageSize}-{userId}-{_userContextService.GetUserId}";
         PaginationRequest paginationRequest = new PaginationRequest() { PageNumber = pageNumber, PageSize = pageSize };
 
         try
