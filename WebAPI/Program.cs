@@ -1,12 +1,12 @@
 using Infrastructure.Data.Seeder;
 using WebAPI.Installers;
 
-var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.InstallServicesInAssembly(configuration);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.UseCors("Cors");
 
@@ -18,8 +18,8 @@ if (app.Environment.IsDevelopment())
     bool runDataSeeder = configuration.GetSection("DataSeeder")["RunDataSeeder"].ToLower() == "true";
     if (runDataSeeder)
     {
-        ServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
-        DataSeeder dataSeeder = serviceProvider.GetService<DataSeeder>();
+        using IServiceScope scope = app.Services.CreateScope();
+        DataSeeder dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
         dataSeeder.Seed();
     }
 }

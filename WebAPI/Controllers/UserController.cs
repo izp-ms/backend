@@ -4,6 +4,7 @@ using Application.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace WebAPI.Controllers;
 
@@ -13,12 +14,18 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IUserContextService _userContextService;
+    private readonly IMemoryCache _cache;
     private readonly ILogger<UserController> _logger;
 
-    public UserController(IUserService userService, IUserContextService userContextService, ILogger<UserController> logger)
+    public UserController(
+        IUserService userService,
+        IUserContextService userContextService,
+        IMemoryCache cache,
+        ILogger<UserController> logger)
     {
         _userService = userService;
         _userContextService = userContextService;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -33,9 +40,20 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUser([FromQuery] int userId)
     {
         _logger.Log(LogLevel.Information, "Get user information");
+        string cacheKey = $"user-{userId}-{_userContextService.GetUserId}";
+
         try
         {
-            UserDto userData = await _userService.GetUser(userId);
+            if (!_cache.TryGetValue(cacheKey, out UserDto userData))
+            {
+                userData = await _userService.GetUser(userId);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, userData, cacheEntryOptions);
+            }
+
             return Ok(userData);
         }
         catch (Exception ex)
@@ -58,6 +76,10 @@ public class UserController : ControllerBase
             }
             UserUpdateDto updatedUser = await _userService.UpdateUser(userUpdateDto);
             _logger.Log(LogLevel.Information, $"Updated user with id: {updatedUser.Id}");
+
+            string cacheKey = $"user-{userUpdateDto.Id}-{_userContextService.GetUserId}";
+            _cache.Remove(cacheKey);
+
             return Ok(updatedUser);
         }
         catch (Exception ex)
