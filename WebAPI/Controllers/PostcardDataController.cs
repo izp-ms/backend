@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace WebAPI.Controllers;
 
@@ -12,11 +13,19 @@ namespace WebAPI.Controllers;
 public class PostcardDataController : ControllerBase
 {
     private readonly IPostcardDataService _postcardDataService;
+    private readonly IUserContextService _userContextService;
+    private readonly IMemoryCache _cache;
     private readonly ILogger<PostcardDataController> _logger;
 
-    public PostcardDataController(IPostcardDataService postcardDataService, IUserContextService userContextService, ILogger<PostcardDataController> logger)
+    public PostcardDataController(
+        IPostcardDataService postcardDataService,
+        IUserContextService userContextService,
+        IMemoryCache cache,
+        ILogger<PostcardDataController> logger)
     {
         _postcardDataService = postcardDataService;
+        _userContextService = userContextService;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -24,10 +33,21 @@ public class PostcardDataController : ControllerBase
     public async Task<IActionResult> GetPaginatedPostcardData([FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
         _logger.Log(LogLevel.Information, "Get postcard data");
+        string cacheKey = $"postcard-{pageNumber}-{pageSize}-{_userContextService.GetUserId}";
+        PaginationRequest paginationRequest = new PaginationRequest() { PageNumber = pageNumber, PageSize = pageSize };
+
         try
         {
-            PaginationRequest paginationRequest = new PaginationRequest() { PageNumber = pageNumber, PageSize = pageSize };
-            PaginationResponse<PostcardDataDto> postcardData = await _postcardDataService.GetPagination(paginationRequest);
+            if (!_cache.TryGetValue(cacheKey, out PaginationResponse<PostcardDataDto> postcardData))
+            {
+                postcardData = await _postcardDataService.GetPagination(paginationRequest);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, postcardData, cacheEntryOptions);
+            }
+
             return Ok(postcardData);
         }
         catch (Exception ex)
@@ -59,10 +79,20 @@ public class PostcardDataController : ControllerBase
     public async Task<IActionResult> GetNewPostcard([FromBody] CoordinateRequest coordinateRequest)
     {
         _logger.Log(LogLevel.Information, "Get new postcard data");
+        string cacheKey = $"postcard-{coordinateRequest.Latitude}-{coordinateRequest.Longitude}-{_userContextService.GetUserId}";
         try
         {
-            CurrentLocationPostcardsResponse response = await _postcardDataService.GetPostcardsNearby(coordinateRequest);
-            return Ok(response);
+            if (!_cache.TryGetValue(cacheKey, out CurrentLocationPostcardsResponse postcardData))
+            {
+                postcardData = await _postcardDataService.GetPostcardsNearby(coordinateRequest);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, postcardData, cacheEntryOptions);
+            }
+
+            return Ok(postcardData);
         }
         catch (Exception ex)
         {

@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace WebAPI.Controllers;
 
@@ -13,12 +14,18 @@ public class PostcardController : ControllerBase
 {
     private readonly IPostcardService _postcardService;
     private readonly IUserContextService _userContextService;
+    private readonly IMemoryCache _cache;
     private readonly ILogger<PostcardController> _logger;
 
-    public PostcardController(IPostcardService postcardService, IUserContextService userContextService, ILogger<PostcardController> logger)
+    public PostcardController(
+        IPostcardService postcardService,
+        IUserContextService userContextService,
+        IMemoryCache cache,
+        ILogger<PostcardController> logger)
     {
         _postcardService = postcardService;
         _userContextService = userContextService;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -26,10 +33,21 @@ public class PostcardController : ControllerBase
     public async Task<IActionResult> GetPaginatedPostcards([FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
         _logger.Log(LogLevel.Information, "Get postcards");
+        string cacheKey = $"postcard-{pageNumber}-{pageSize}-{_userContextService.GetUserId}";
+        PaginationRequest paginationRequest = new PaginationRequest() { PageNumber = pageNumber, PageSize = pageSize };
+
         try
         {
-            PaginationRequest paginationRequest = new PaginationRequest() { PageNumber = pageNumber, PageSize = pageSize };
-            PaginationResponse<PostcardDto> postcards = await _postcardService.GetPagination(paginationRequest);
+            if (!_cache.TryGetValue(cacheKey, out PaginationResponse<PostcardDto> postcards))
+            {
+                postcards = await _postcardService.GetPagination(paginationRequest);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, postcards, cacheEntryOptions);
+            }
+
             return Ok(postcards);
         }
         catch (Exception ex)
