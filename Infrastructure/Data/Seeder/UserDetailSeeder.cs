@@ -6,7 +6,7 @@ public class UserDetailSeeder
 {
     public static IEnumerable<UserDetail> GetUsersDetailsSeeder(DataContext dataContext)
     {
-        var users = dataContext.Users.ToList();
+        List<User> users = dataContext.Users.ToList();
         IEnumerable<UserDetail> userDetails = new List<UserDetail>()
         {
             new UserDetail()

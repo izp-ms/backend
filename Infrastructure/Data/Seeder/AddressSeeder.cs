@@ -7,7 +7,7 @@ public class AddressSeeder
 {
     public static IEnumerable<Address> GetAddressSeeder(DataContext dataContext)
     {
-        var users = dataContext.Users.ToList();
+        List<User> users = dataContext.Users.ToList();
         IEnumerable<Address> address = new List<Address>()
         {
             new Address()

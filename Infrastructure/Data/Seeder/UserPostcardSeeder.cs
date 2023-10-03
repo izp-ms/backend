@@ -6,8 +6,8 @@ public class UserPostcardSeeder
 {
     public static IEnumerable<UserPostcard> GetUserPostcardsSeeder(DataContext dataContext)
     {
-        var users = dataContext.Users.ToList();
-        var postcard = dataContext.Postcards.ToList();
+        List<User> users = dataContext.Users.ToList();
+        List<Postcard> postcard = dataContext.Postcards.ToList();
         IEnumerable<UserPostcard> address = new List<UserPostcard>()
         {
             new UserPostcard()

@@ -6,7 +6,7 @@ public class UserStatSeeder
 {
     public static IEnumerable<UserStat> GetUsersStatSeeder(DataContext dataContext)
     {
-        var users = dataContext.Users.ToList();
+        List<User> users = dataContext.Users.ToList();
         IEnumerable<UserStat> userStats = new List<UserStat>()
         {
             new UserStat()

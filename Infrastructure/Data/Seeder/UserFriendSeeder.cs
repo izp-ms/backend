@@ -6,7 +6,7 @@ public class UserFriendSeeder
 {
     public static IEnumerable<UserFriends> GetUserFriendsSeeder(DataContext dataContext)
     {
-        var users = dataContext.Users.ToList();
+        List<User> users = dataContext.Users.ToList();
         IEnumerable<UserFriends> address = new List<UserFriends>()
         {
             new UserFriends()
