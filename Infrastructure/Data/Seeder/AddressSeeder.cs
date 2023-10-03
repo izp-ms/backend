@@ -5,113 +5,141 @@ namespace Infrastructure.Data.Seeder;
 
 public class AddressSeeder
 {
-    public static IEnumerable<Address> GetAddressSeeder()
+    public static IEnumerable<Address> GetAddressSeeder(DataContext dataContext)
     {
+        List<User> users = dataContext.Users.ToList();
         IEnumerable<Address> address = new List<Address>()
         {
-            new Address()// ID: 1
+            new Address()
             {
+                Id = users[0].Id,
                 City = "Gliwice",
                 Country = "Poland"
             },
-            new Address()// ID: 2
+            new Address()
             {
+                Id = users[1].Id,
                 City = "Dąbrowa Górnicza",
                 Country = "Poland"
             },
-            new Address()// ID: 3
+            new Address()
             {
+                Id = users[2].Id,
                 City = "Warszawa",
                 Country = "Poland"
             },
-            new Address()// ID: 4
+            new Address()
             {
+                Id = users[3].Id,
                 City = "Bytom",
                 Country = "Poland"
             },
-            new Address()// ID: 5
+            new Address()
             {
+                Id = users[4].Id,
                 City = "Mikołów",
                 Country = "Poland"
             },
-            new Address()// ID: 6
+            new Address()
             {
+                Id = users[5].Id,
                 City = "Gdańsk",
                 Country = "Poland"
             },
-            new Address()// ID: 7
+            new Address()
             {
+                Id = users[6].Id,
                 City = "Hel",
                 Country = "Poland"
             },
-            new Address()// ID: 8
+            new Address()
             {
+                Id = users[7].Id,
                 City = "Nowy Sącz",
                 Country = "Poland"
             },
-            new Address()// ID: 9
+            new Address()
             {
+                Id = users[8].Id,
                 City = "Nysa",
                 Country = "Poland"
             },
-            new Address()// ID: 10
+            new Address()
             {
+                Id = users[9].Id,
                 City = "Szczecin",
                 Country = "Poland"
             },
-            new Address()// ID: 12
+            new Address()
             {
+                Id = users[10].Id,
                 City = "Świnoujście",
                 Country = "Poland"
             },
-            new Address()// ID: 13
+            new Address()
             {
+                Id = users[11].Id,
                 City = "Katowice",
                 Country = "Poland"
             },
-            new Address()// ID: 14
+            new Address()
             {
+                Id = users[12].Id,
                 City = "Gliwice",
                 Country = "Poland"
             },
-            new Address()// ID: 15
+            new Address()
             {
+                Id = users[13].Id,
                 City = "Zakopane",
                 Country = "Poland"
             },
-            new Address()// ID: 16
+            new Address()
             {
+                Id = users[14].Id,
                 City = "Częstochowa",
                 Country = "Poland"
             },
-            new Address()// ID: 17
+            new Address()
             {
+                Id = users[15].Id,
                 City = "Gliwice",
                 Country = "Poland"
             },
-            new Address()// ID: 18
+            new Address()
             {
+                Id = users[16].Id,
                 City = "Sopot",
                 Country = "Poland"
             },
-            new Address()// ID: 19
+            new Address()
             {
+                Id = users[17].Id,
                 City = "łódź",
                 Country = "Poland"
             },
-            new Address()// ID: 20
+            new Address()
             {
+                Id = users[18].Id,
                 City = "Białystok",
                 Country = "Poland"
             },
-            new Address()// ID: 21
+            new Address()
             {
+                Id = users[19].Id,
                 City = "Poznań",
                 Country = "Poland"
             },
-            new Address()// ID: 22
+            new Address()
             {
+                Id = users[20].Id,
                 City = "Wrocław",
+                Country = "Poland"
+            },
+            new Address()
+            {
+                Id = users[21].Id,
+                City = "Bytom",
                 Country = "Poland"
             },
 

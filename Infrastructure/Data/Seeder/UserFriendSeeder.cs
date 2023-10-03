@@ -4,199 +4,200 @@ namespace Infrastructure.Data.Seeder;
 
 public class UserFriendSeeder
 {
-    public static IEnumerable<UserFriends> GetUserFriendsSeeder()
+    public static IEnumerable<UserFriends> GetUserFriendsSeeder(DataContext dataContext)
     {
+        List<User> users = dataContext.Users.ToList();
         IEnumerable<UserFriends> address = new List<UserFriends>()
         {
-            new UserFriends()// ID: 1
+            new UserFriends()
             {
-                UserId = 1,
-                FriendId = 2
+                UserId = users[0].Id,
+                FriendId = users[1].Id
             },
-            new UserFriends()// ID: 2
+            new UserFriends()
             {
-                UserId = 2,
-                FriendId = 1
+                UserId = users[1].Id,
+                FriendId = users[0].Id
             },
-            new UserFriends()// ID: 3
+            new UserFriends()
             {
-                UserId = 18,
-                FriendId = 14
+                UserId = users[17].Id,
+                FriendId = users[13].Id
             },
-            new UserFriends()// ID: 4
+            new UserFriends()
             {
-                UserId = 6,
-                FriendId = 8
+                UserId = users[5].Id,
+                FriendId = users[7].Id
             },
-            new UserFriends()// ID: 5
+            new UserFriends()
             {
-                UserId = 11,
-                FriendId = 4
+                UserId = users[10].Id,
+                FriendId = users[3].Id
             },
-            new UserFriends()// ID: 6
+            new UserFriends()
             {
-                UserId = 19,
-                FriendId = 10
+                UserId = users[18].Id,
+                FriendId = users[9].Id
             },
-            new UserFriends()// ID: 7
+            new UserFriends()
             {
-                UserId = 3,
-                FriendId = 15
+                UserId = users[2].Id,
+                FriendId = users[14].Id
             },
-            new UserFriends()// ID: 8
+            new UserFriends()
             {
-                UserId = 22,
-                FriendId = 7
+                UserId = users[21].Id,
+                FriendId = users[6].Id
             },
-            new UserFriends()// ID: 9
+            new UserFriends()
             {
-                UserId = 13,
-                FriendId = 16
+                UserId = users[12].Id,
+                FriendId = users[15].Id
             },
-            new UserFriends()// ID: 10
+            new UserFriends()
             {
-                UserId = 5,
-                FriendId = 9
+                UserId = users[4].Id,
+                FriendId = users[8].Id
             },
-            new UserFriends()// ID: 11
+            new UserFriends()
             {
-                UserId = 20,
-                FriendId = 12
+                UserId = users[19].Id,
+                FriendId = users[11].Id
             },
-            new UserFriends()// ID: 12
+            new UserFriends()
             {
-                UserId = 2,
-                FriendId = 17
+                UserId = users[1].Id,
+                FriendId = users[16].Id
             },
-            new UserFriends()// ID: 13
+            new UserFriends()
             {
-                UserId = 8,
-                FriendId = 3
+                UserId = users[7].Id,
+                FriendId = users[2].Id
             },
-            new UserFriends()// ID: 14
+            new UserFriends()
             {
-                UserId = 14,
-                FriendId = 21
+                UserId = users[13].Id,
+                FriendId = users[20].Id
             },
-            new UserFriends()// ID: 15
+            new UserFriends()
             {
-                UserId = 7,
-                FriendId = 19
+                UserId = users[6].Id,
+                FriendId = users[18].Id
             },
-            new UserFriends()// ID: 16
+            new UserFriends()
             {
-                UserId = 10,
-                FriendId = 6
+                UserId = users[9].Id,
+                FriendId = users[5].Id
             },
-            new UserFriends()// ID: 17
+            new UserFriends()
             {
-                UserId = 16,
-                FriendId = 5
+                UserId = users[15].Id,
+                FriendId = users[4].Id
             },
-            new UserFriends()// ID: 18
+            new UserFriends()
             {
-                UserId = 12,
-                FriendId = 18
+                UserId = users[11].Id,
+                FriendId = users[17].Id
             },
-            new UserFriends()// ID: 19
+            new UserFriends()
             {
-                UserId = 4,
-                FriendId = 11
+                UserId = users[3].Id,
+                FriendId = users[10].Id
             },
-            new UserFriends()// ID: 20
+            new UserFriends()
             {
-                UserId = 9,
-                FriendId = 10
+                UserId = users[8].Id,
+                FriendId = users[9].Id
             },
-            new UserFriends()// ID: 21
+            new UserFriends()
             {
-                UserId = 15,
-                FriendId = 2
+                UserId = users[14].Id,
+                FriendId = users[1].Id
             },
-            new UserFriends()// ID: 22
+            new UserFriends()
             {
-                UserId = 17,
-                FriendId = 13
+                UserId = users[16].Id,
+                FriendId = users[12].Id
             },
-            new UserFriends()// ID: 23
+            new UserFriends()
             {
-                UserId = 22,
-                FriendId = 9
+                UserId = users[21].Id,
+                FriendId = users[8].Id
             },
-            new UserFriends()// ID: 24
+            new UserFriends()
             {
-                UserId = 11,
-                FriendId = 7
+                UserId = users[10].Id,
+                FriendId = users[6].Id
             },
-            new UserFriends()// ID: 25
+            new UserFriends()
             {
-                UserId = 6,
-                FriendId = 10
+                UserId = users[5].Id,
+                FriendId = users[9].Id
             },
-            new UserFriends()// ID: 26
+            new UserFriends()
             {
-                UserId = 13,
-                FriendId = 4
+                UserId = users[12].Id,
+                FriendId = users[3].Id
             },
-            new UserFriends()// ID: 27
+            new UserFriends()
             {
-                UserId = 21,
-                FriendId = 8
+                UserId = users[20].Id,
+                FriendId = users[7].Id
             },
-            new UserFriends()// ID: 28
+            new UserFriends()
             {
-                UserId = 3,
-                FriendId = 19
+                UserId = users[2].Id,
+                FriendId = users[18].Id
             },
-            new UserFriends()// ID: 29
+            new UserFriends()
             {
-                UserId = 5,
-                FriendId = 16
+                UserId = users[4].Id,
+                FriendId = users[15].Id
             },
-            new UserFriends()// ID: 30
+            new UserFriends()
             {
-                UserId = 8,
-                FriendId = 12
+                UserId = users[7].Id,
+                FriendId = users[11].Id
             },
-            new UserFriends()// ID: 31
+            new UserFriends()
             {
-                UserId = 2,
-                FriendId = 14
+                UserId = users[1].Id,
+                FriendId = users[13].Id
             },
-            new UserFriends()// ID: 32
+            new UserFriends()
             {
-                UserId = 18,
-                FriendId = 15
+                UserId = users[17].Id,
+                FriendId = users[14].Id
             },
-            new UserFriends()// ID: 33
+            new UserFriends()
             {
-                UserId = 10,
-                FriendId = 17
+                UserId = users[9].Id,
+                FriendId = users[16].Id
             },
-            new UserFriends()// ID: 34
+            new UserFriends()
             {
-                UserId = 19,
-                FriendId = 6
+                UserId = users[18].Id,
+                FriendId = users[5].Id
             },
-            new UserFriends()// ID: 35
+            new UserFriends()
             {
-                UserId = 7,
-                FriendId = 22
+                UserId = users[6].Id,
+                FriendId = users[21].Id
             },
-            new UserFriends()// ID: 36
+            new UserFriends()
             {
-                UserId = 4,
-                FriendId = 13
+                UserId = users[3].Id,
+                FriendId = users[12].Id
             },
-            new UserFriends()// ID: 37
+            new UserFriends()
             {
-                UserId = 9,
-                FriendId = 21
+                UserId = users[8].Id,
+                FriendId = users[20].Id
             },
-            new UserFriends()// ID: 38
+            new UserFriends()
             {
-                UserId = 16,
-                FriendId = 3
+                UserId = users[15].Id,
+                FriendId = users[2].Id
             },
         };
         return address;
