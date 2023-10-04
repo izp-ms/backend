@@ -11,6 +11,7 @@ public class PostcardDto : IMap
     public string Type { get; set; }
     public DateTime CreatedAt { get; set; }
     public int UserId { get; set; }
+    public bool IsSent { get; set; }
 
     public void Mapping(Profile profile)
     {

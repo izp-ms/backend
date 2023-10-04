@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Validators;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,6 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 {
     private readonly DataContext _dataContext;
     private readonly DbSet<T> _entities;
-
-    private readonly int[] AllowedPageSizes = { 10, 25, 50, 100 };
 
     public Repository(DataContext dataContext)
     {
@@ -42,15 +41,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<IEnumerable<T>> GetPagination(int pageNumber, int pageSize)
     {
-        if (pageNumber < 0 || pageSize <= 0)
-        {
-            throw new ArgumentException("Invalid page number or page size.");
-        }
-
-        if (!AllowedPageSizes.Contains(pageSize))
-        {
-            throw new ArgumentException("Invalid page size. Allowed page sizes: 10, 25, 50, 100.");
-        }
+        PaginationValidator.CheckPaginationValid(pageNumber, pageSize);
 
         return await _entities.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
     }

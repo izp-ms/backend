@@ -63,5 +63,11 @@ public class DataSeeder
             _dataContext.UserFriends.AddRange(UserFriendSeeder.GetUserFriendsSeeder(_dataContext));
             _dataContext.SaveChanges();
         }
+
+        if (!_dataContext.PostcardCollection.Any())
+        {
+            _dataContext.PostcardCollection.AddRange(PostcardCollectionSeeder.GetPostcardCollectionSeeder(_dataContext));
+            _dataContext.SaveChanges();
+        }
     }
 }
