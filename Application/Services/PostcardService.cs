@@ -61,7 +61,7 @@ public class PostcardService : IPostcardService
         return _mapper.Map<PostcardDto>(postcard);
     }
 
-    public async Task<PaginationResponse<PostcardDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
+    public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
     {
         if (postcardPaginationRequest.UserId == null || _userContextService.GetUserId == null)
         {
@@ -74,14 +74,17 @@ public class PostcardService : IPostcardService
             postcardPaginationRequest.PageSize,
             (int)postcardPaginationRequest.UserId);
 
+        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)postcardPaginationRequest.UserId);
+
         int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)postcardPaginationRequest.PageSize);
-        PaginationResponse<PostcardDto> paginationResponse = new PaginationResponse<PostcardDto>()
+
+        PaginationResponse<PostcardWithDataDto> paginationResponse = new PaginationResponse<PostcardWithDataDto>()
         {
             PageNumber = postcardPaginationRequest.PageNumber,
             PageSize = postcardPaginationRequest.PageSize,
             TotalCount = allPostcards.Count(),
             TotalPages = totalPages,
-            Content = _mapper.Map<IEnumerable<Postcard>, IEnumerable<PostcardDto>>(postcards)
+            Content = mappedPostcards
         };
 
         return paginationResponse;
