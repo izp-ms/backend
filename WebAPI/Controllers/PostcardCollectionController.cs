@@ -31,7 +31,7 @@ public class PostcardCollectionController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get postcard collection: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get postcard collection: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }

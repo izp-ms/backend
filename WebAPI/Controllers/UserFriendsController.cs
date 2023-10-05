@@ -33,7 +33,7 @@ public class UserFriendsController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get following: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get following: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -55,7 +55,7 @@ public class UserFriendsController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update friends: {ex.Message}");
-            return BadRequest(new { message = $"Failed to update friends: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -77,7 +77,7 @@ public class UserFriendsController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update friends: {ex.Message}");
-            return BadRequest(new { message = $"Failed to update friends: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }

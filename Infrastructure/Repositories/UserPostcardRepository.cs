@@ -18,4 +18,9 @@ public class UserPostcardRepository : Repository<UserPostcard>, IUserPostcardRep
     {
         return await _dataContext.UserPostcards.FirstOrDefaultAsync(a => a.PostcardId == postcardId);
     }
+
+    public async Task<IEnumerable<UserPostcard>> GetUserPostcardByUserId(int userId)
+    {
+        return await _dataContext.UserPostcards.Where(a => a.UserId == userId).ToListAsync();
+    }
 }

@@ -33,7 +33,7 @@ public class AddressController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get address: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get address: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -55,7 +55,7 @@ public class AddressController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update address: {ex.Message}");
-            return BadRequest(new { message = $"Failed to update address: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }

@@ -21,4 +21,41 @@ public class FavouritePostcardController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetFavouritePostcardsByUserId([FromQuery] int userId)
+    {
+        _logger.Log(LogLevel.Information, "Get favourite postcards");
+        try
+        {
+            IEnumerable<FavouritePostcardDto> favouritePostcardDtos = await _favouritePostcardService.GetFavouritePostcards(userId);
+            return Ok(favouritePostcardDtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to get favourite postcards: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateFavouritePostcards([FromBody] UpdateFavouritePostcardRequest updateFavouritePostcardRequest)
+    {
+        _logger.Log(LogLevel.Information, "Update favourite postcards");
+        try
+        {
+            if (_userContextService.GetUserId != updateFavouritePostcardRequest.UserId)
+            {
+                _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to update favourite postcards with id: {updateFavouritePostcardRequest.UserId}");
+                return BadRequest(new { message = "Unauthorized" });
+            }
+            IEnumerable<FavouritePostcardDto> updatedFavouritePostcards = await _favouritePostcardService.UpdateFavouritePostcards(updateFavouritePostcardRequest);
+            _logger.Log(LogLevel.Information, $"Updated favourite postcards with id: {updatedFavouritePostcards}");
+            return Ok(updatedFavouritePostcards);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to update favourite postcards: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 }

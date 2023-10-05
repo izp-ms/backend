@@ -33,7 +33,7 @@ public class UserDetailController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get user detail: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get user detail: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -55,7 +55,7 @@ public class UserDetailController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update user detail: {ex.Message}");
-            return BadRequest(new { message = $"Failed to update user detail: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }
