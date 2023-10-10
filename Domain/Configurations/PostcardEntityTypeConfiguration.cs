@@ -15,5 +15,6 @@ public class PostcardEntityTypeConfiguration : IEntityTypeConfiguration<Postcard
         builder.Property(p => p.Title).HasMaxLength(50).IsRequired();
         builder.Property(p => p.Content).HasMaxLength(280).IsRequired();
         builder.Property(p => p.Type).HasMaxLength(20).IsRequired();
+        builder.Property(p => p.IsSent).HasDefaultValue(false).IsRequired();
     }
 }

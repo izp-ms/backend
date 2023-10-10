@@ -61,18 +61,30 @@ public class PostcardService : IPostcardService
         return _mapper.Map<PostcardDto>(postcard);
     }
 
-    public async Task<PaginationResponse<PostcardDto>> GetPagination(PaginationRequest paginationRequest)
+    public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
     {
-        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAll();
-        IEnumerable<Postcard> postcards = await _postcardRepository.GetPagination(paginationRequest.PageNumber, paginationRequest.PageSize);
-        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)paginationRequest.PageSize);
-        PaginationResponse<PostcardDto> paginationResponse = new PaginationResponse<PostcardDto>()
+        if (postcardPaginationRequest.UserId == null || _userContextService.GetUserId == null)
         {
-            PageNumber = paginationRequest.PageNumber,
-            PageSize = paginationRequest.PageSize,
+            throw new Exception("User not found");
+        }
+
+        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId((int)postcardPaginationRequest.UserId);
+        IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(
+            postcardPaginationRequest.PageNumber,
+            postcardPaginationRequest.PageSize,
+            (int)postcardPaginationRequest.UserId);
+
+        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)postcardPaginationRequest.UserId);
+
+        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)postcardPaginationRequest.PageSize);
+
+        PaginationResponse<PostcardWithDataDto> paginationResponse = new PaginationResponse<PostcardWithDataDto>()
+        {
+            PageNumber = postcardPaginationRequest.PageNumber,
+            PageSize = postcardPaginationRequest.PageSize,
             TotalCount = allPostcards.Count(),
             TotalPages = totalPages,
-            Content = _mapper.Map<IEnumerable<Postcard>, IEnumerable<PostcardDto>>(postcards)
+            Content = mappedPostcards
         };
 
         return paginationResponse;
@@ -80,12 +92,7 @@ public class PostcardService : IPostcardService
 
     public async Task<PostcardDto> GetPostcardById(int postcardId)
     {
-        Postcard postcard = await _postcardRepository.Get(postcardId);
-        if (postcard == null)
-        {
-            throw new Exception("Postcard not found");
-        }
-
+        Postcard postcard = await _postcardRepository.Get(postcardId) ?? throw new Exception("Postcard not found");
         return _mapper.Map<PostcardDto>(postcard);
     }
 
@@ -97,8 +104,14 @@ public class PostcardService : IPostcardService
             throw new Exception("Postcard is not valid");
         }
 
+        PostcardDto postcard = await GetPostcardById(postcardId);
         UserStatDto sender = await _userStatsService.GetUserStatsById(_userContextService.GetUserId ?? userPostcard.UserId);
         UserStatDto receiver = await _userStatsService.GetUserStatsById(newUserId);
+
+        if (postcard.IsSent)
+        {
+            throw new Exception("Postcard already received by user");
+        }
 
         if (!PostcardTransferValidator.IsSenderAndReceiverValid(sender, receiver))
         {
@@ -109,7 +122,9 @@ public class PostcardService : IPostcardService
         sender.Score++;
         receiver.PostcardsReceived++;
         receiver.Score++;
+        postcard.IsSent = true;
 
+        await UpdatePostcard(postcard);
         await _userStatsService.UpdateUserStats(sender);
         await _userStatsService.UpdateUserStats(receiver);
 

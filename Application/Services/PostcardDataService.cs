@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Application.Dto;
 using Application.Helpers;
 using Application.Interfaces;
@@ -108,13 +108,14 @@ public class PostcardDataService : IPostcardDataService
 
     public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PaginationRequest paginationRequest)
     {
-        IEnumerable<PostcardData> allPostcardsData = await _postcardDataRepository.GetAll();
-        IEnumerable<PostcardData> postcardsData = await _postcardDataRepository.GetPagination(paginationRequest.PageNumber, paginationRequest.PageSize);
-        int totalPages = (int)Math.Ceiling(allPostcardsData.Count() / (double)paginationRequest.PageSize);
+        IEnumerable<PostcardData> allPostcardsData = await GetAllPostcardsDataForPagination(postcardPaginationRequest);
+        IEnumerable<PostcardData> postcardsData = await GetPostcardsDataForPagination(postcardPaginationRequest);
+
+        int totalPages = (int)Math.Ceiling(allPostcardsData.Count() / (double)postcardPaginationRequest.PageSize);
         PaginationResponse<PostcardDataDto> paginationResponse = new PaginationResponse<PostcardDataDto>()
         {
-            PageNumber = paginationRequest.PageNumber,
-            PageSize = paginationRequest.PageSize,
+            PageNumber = postcardPaginationRequest.PageNumber,
+            PageSize = postcardPaginationRequest.PageSize,
             TotalCount = allPostcardsData.Count(),
             TotalPages = totalPages,
             Content = _mapper.Map<IEnumerable<PostcardData>, IEnumerable<PostcardDataDto>>(postcardsData)
@@ -139,5 +140,30 @@ public class PostcardDataService : IPostcardDataService
         }
         await _postcardDataRepository.Delete(postcardData);
         return _mapper.Map<PostcardDataDto>(postcardData);
+    }
+
+    private async Task<IEnumerable<PostcardData>> GetAllPostcardsDataForPagination(PostcardPaginationRequest postcardPaginationRequest)
+    {
+        if (postcardPaginationRequest.UserId == null)
+        {
+            return await _postcardDataRepository.GetAll();
+        }
+        return await _postcardDataRepository.GetAllPostcardsDataByUserId((int)postcardPaginationRequest.UserId);
+    }
+
+    private async Task<IEnumerable<PostcardData>> GetPostcardsDataForPagination(PostcardPaginationRequest postcardPaginationRequest)
+    {
+        if (postcardPaginationRequest.UserId == null)
+        {
+            return await _postcardDataRepository.GetPagination(
+                postcardPaginationRequest.PageNumber,
+                postcardPaginationRequest.PageSize
+            );
+        }
+        return await _postcardDataRepository.GetPaginationByUserId(
+            postcardPaginationRequest.PageNumber,
+            postcardPaginationRequest.PageSize,
+            (int)postcardPaginationRequest.UserId
+        );
     }
 }
