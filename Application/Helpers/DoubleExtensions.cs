@@ -13,8 +13,7 @@ public static class DoubleExtensions
         CultureInfo[] cultures = new CultureInfo[]
         {
             CultureInfo.InvariantCulture,
-            new CultureInfo("fr-FR"),
-            new CultureInfo("de-DE"),
+            new CultureInfo("en-EN"),
             new CultureInfo("pl-PL")
         };
 

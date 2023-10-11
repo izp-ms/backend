@@ -1,4 +1,3 @@
-using System.Globalization;
 using Application.Dto;
 using Application.Helpers;
 using Application.Interfaces;
@@ -6,7 +5,6 @@ using Application.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Services;
 
@@ -37,9 +35,9 @@ public class PostcardDataService : IPostcardDataService
 
     public async Task<CurrentLocationPostcardsResponse> GetPostcardsNearby(CoordinateRequest coordinateRequest)
     {
-        IEnumerable<PostcardData> data = await _postcardDataRepository.GetAll();
+        IEnumerable<PostcardData> allPostcards = await _postcardDataRepository.GetAll();
 
-        List<PostcardData> postcards = data.ToList();//.Where(data.isSent == false);
+        List<PostcardData> postcardsList = allPostcards.ToList();
 
         int showPostcardsInRange = 5000;
         double userLatitude = coordinateRequest.Latitude.ToDouble();
@@ -48,7 +46,7 @@ public class PostcardDataService : IPostcardDataService
         List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
         List<PostcardDataDto> PostcardsNearby = new List<PostcardDataDto>();
 
-        postcards.ForEach(postcard =>
+        postcardsList.ForEach(postcard =>
         {
             double distance = Measure(postcard.Latitude.ToDouble(), postcard.Longitude.ToDouble(), userLatitude, userLongitude);
 
@@ -95,7 +93,7 @@ public class PostcardDataService : IPostcardDataService
         return distance;
     }
 
-    public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PaginationRequest postcardPaginationRequest)
+    public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
     {
         IEnumerable<PostcardData> allPostcardsData = await GetAllPostcardsDataForPagination(postcardPaginationRequest);
         IEnumerable<PostcardData> postcardsData = await GetPostcardsDataForPagination(postcardPaginationRequest);

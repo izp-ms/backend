@@ -74,7 +74,7 @@ public class PostcardDataController : ControllerBase
         }
     }
 
-    [AllowAnonymous]
+
     [HttpPost("NewPostcard")]
     public async Task<IActionResult> GetNewPostcard([FromBody] CoordinateRequest coordinateRequest)
     {
