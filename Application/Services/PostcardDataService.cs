@@ -30,11 +30,6 @@ public class PostcardDataService : IPostcardDataService
             throw new ArgumentNullException(nameof(postcardData));
         }
 
-        // if (!ImageValidator.IsImageValid(postcardData.ImageBase64))
-        // {
-        //     throw new Exception("Image has wrong aspect ratio");
-        // }
-
         PostcardData postcardDataEntity = _mapper.Map<PostcardData>(postcardData);
         PostcardData newPostcardData = await _postcardDataRepository.Insert(postcardDataEntity);
         return _mapper.Map<PostcardDataDto>(newPostcardData);
@@ -44,41 +39,40 @@ public class PostcardDataService : IPostcardDataService
     {
         IEnumerable<PostcardData> data = await _postcardDataRepository.GetAll();
 
-        List<PostcardData> list = data.ToList();//.Where(data.isSent == false);
+        List<PostcardData> postcards = data.ToList();//.Where(data.isSent == false);
 
-
-        double userLati = coordinateRequest.Latitude.ToDouble();
-        double userLong = coordinateRequest.Longitude.ToDouble();
+        int showPostcardsInRange = 5000;
+        double userLatitude = coordinateRequest.Latitude.ToDouble();
+        double userLongitude = coordinateRequest.Longitude.ToDouble();
 
         List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
         List<PostcardDataDto> PostcardsNearby = new List<PostcardDataDto>();
 
-        list.ForEach(item =>
+        postcards.ForEach(postcard =>
         {
-            //double.ToDouble(item.Latitude)
-            double distance = Measure(item.Latitude.ToDouble(), item.Longitude.ToDouble(), userLati, userLong);
+            double distance = Measure(postcard.Latitude.ToDouble(), postcard.Longitude.ToDouble(), userLatitude, userLongitude);
 
-            if (distance <= item.CollectRangeInMeters)
+            if (distance <= postcard.CollectRangeInMeters)
             {
                 PostcardsToCollect.Add(new PostcardDataDto
                 {
-                    Id = item.Id,
-                    Latitude = item.Latitude,
-                    Longitude = item.Longitude,
-                    CollectRangeInMeters = item.CollectRangeInMeters,
-                    ImageBase64 = item.ImageBase64
+                    Id = postcard.Id,
+                    Latitude = postcard.Latitude,
+                    Longitude = postcard.Longitude,
+                    CollectRangeInMeters = postcard.CollectRangeInMeters,
+                    ImageBase64 = postcard.ImageBase64
                 });
 
             }
-            else if (distance <= 5000)
+            else if (distance <= showPostcardsInRange)
             {
                 PostcardsNearby.Add(new PostcardDataDto
                 {
-                    Id = item.Id,
-                    Latitude = item.Latitude,
-                    Longitude = item.Longitude,
-                    CollectRangeInMeters = item.CollectRangeInMeters,
-                    ImageBase64 = item.ImageBase64
+                    Id = postcard.Id,
+                    Latitude = postcard.Latitude,
+                    Longitude = postcard.Longitude,
+                    CollectRangeInMeters = postcard.CollectRangeInMeters,
+                    ImageBase64 = postcard.ImageBase64
                 });
             }
         });
@@ -89,24 +83,19 @@ public class PostcardDataService : IPostcardDataService
         };
     }
 
-    private double Measure(object value, double v, double userLati, double userLong)
-    {
-        throw new NotImplementedException();
-    }
-
     private double Measure(double postcardLatitude, double postcardLongitude, double userLatitude, double userLongitude)
     {
         double earthRad = 6378137; // meters
         double diffrentceLatitude = (userLatitude * Math.PI / 180) - (postcardLatitude * Math.PI / 180);
         double diffrentceLongitude = (userLongitude * Math.PI / 180) - (postcardLongitude * Math.PI / 180);
-        double a = Math.Sin(diffrentceLatitude / 2) * Math.Sin(diffrentceLatitude / 2) +
+        double x = Math.Sin(diffrentceLatitude / 2) * Math.Sin(diffrentceLatitude / 2) +
                    Math.Cos(postcardLatitude * Math.PI / 180) * Math.Cos(userLatitude * Math.PI / 180) *
                    Math.Sin(diffrentceLongitude / 2) * Math.Sin(diffrentceLongitude / 2);
-        double distance = 2 * earthRad * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        double distance = 2 * earthRad * Math.Atan2(Math.Sqrt(x), Math.Sqrt(1 - x));
         return distance;
     }
 
-    public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PaginationRequest paginationRequest)
+    public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PaginationRequest postcardPaginationRequest)
     {
         IEnumerable<PostcardData> allPostcardsData = await GetAllPostcardsDataForPagination(postcardPaginationRequest);
         IEnumerable<PostcardData> postcardsData = await GetPostcardsDataForPagination(postcardPaginationRequest);
