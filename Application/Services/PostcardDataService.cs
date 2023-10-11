@@ -83,7 +83,7 @@ public class PostcardDataService : IPostcardDataService
 
     private double Measure(double postcardLatitude, double postcardLongitude, double userLatitude, double userLongitude)
     {
-        double earthRad = 6378137; // meters
+        double earthRad = 6378137;
         double diffrentceLatitude = (userLatitude * Math.PI / 180) - (postcardLatitude * Math.PI / 180);
         double diffrentceLongitude = (userLongitude * Math.PI / 180) - (postcardLongitude * Math.PI / 180);
         double x = Math.Sin(diffrentceLatitude / 2) * Math.Sin(diffrentceLatitude / 2) +
