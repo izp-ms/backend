@@ -12,12 +12,18 @@ public class PostcardDataService : IPostcardDataService
 {
     private readonly IPostcardDataRepository _postcardDataRepository;
     private readonly IPostcardRepository _postcardRepository;
+    private readonly IUserContextService _userContextService;
     private readonly IMapper _mapper;
 
-    public PostcardDataService(IPostcardDataRepository postcardDataRepository, IPostcardRepository postcardRepository, IMapper mapper)
+    public PostcardDataService(
+        IPostcardDataRepository postcardDataRepository,
+        IPostcardRepository postcardRepository,
+        IUserContextService userContextService,
+        IMapper mapper)
     {
         _postcardDataRepository = postcardDataRepository;
         _postcardRepository = postcardRepository;
+        _userContextService = userContextService;
         _mapper = mapper;
     }
 
@@ -35,18 +41,26 @@ public class PostcardDataService : IPostcardDataService
 
     public async Task<CurrentLocationPostcardsResponse> GetPostcardsNearby(CoordinateRequest coordinateRequest)
     {
-        IEnumerable<PostcardData> allPostcards = await _postcardDataRepository.GetAll();
+        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAll();
+        IEnumerable<PostcardData> allPostcardsData = await _postcardDataRepository.GetAll();
 
-        List<PostcardData> postcardsList = allPostcards.ToList();
+        List<Postcard> postcards = allPostcards
+            .Where(postcard => postcard.Users.Any(user => user.Id == _userContextService.GetUserId))
+            .ToList();
 
-        int showPostcardsInRange = 5000;
+        List<PostcardData> filteredPostcardsData = allPostcards
+            .Where(postcard => postcard.Users.Any(user => user.Id != _userContextService.GetUserId))
+            .Select(postcard => postcard.PostcardData)
+            .Distinct()
+            .ToList();
+
         double userLatitude = coordinateRequest.Latitude.ToDouble();
         double userLongitude = coordinateRequest.Longitude.ToDouble();
 
         List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
         List<PostcardDataDto> PostcardsNearby = new List<PostcardDataDto>();
 
-        postcardsList.ForEach(postcard =>
+        allPostcardsData.ToList().ForEach(postcard =>
         {
             double distance = Measure(postcard.Latitude.ToDouble(), postcard.Longitude.ToDouble(), userLatitude, userLongitude);
 
@@ -62,7 +76,7 @@ public class PostcardDataService : IPostcardDataService
                 });
 
             }
-            else if (distance <= showPostcardsInRange)
+            else if (distance <= coordinateRequest.PostcardNotificationRangeInMeters)
             {
                 PostcardsNearby.Add(new PostcardDataDto
                 {
@@ -74,23 +88,12 @@ public class PostcardDataService : IPostcardDataService
                 });
             }
         });
+
         return new CurrentLocationPostcardsResponse()
         {
             PostcardsCollected = PostcardsToCollect,
             PostcardsNearby = PostcardsNearby
         };
-    }
-
-    private double Measure(double postcardLatitude, double postcardLongitude, double userLatitude, double userLongitude)
-    {
-        double earthRad = 6378137;
-        double diffrentceLatitude = (userLatitude * Math.PI / 180) - (postcardLatitude * Math.PI / 180);
-        double diffrentceLongitude = (userLongitude * Math.PI / 180) - (postcardLongitude * Math.PI / 180);
-        double x = Math.Sin(diffrentceLatitude / 2) * Math.Sin(diffrentceLatitude / 2) +
-                   Math.Cos(postcardLatitude * Math.PI / 180) * Math.Cos(userLatitude * Math.PI / 180) *
-                   Math.Sin(diffrentceLongitude / 2) * Math.Sin(diffrentceLongitude / 2);
-        double distance = 2 * earthRad * Math.Atan2(Math.Sqrt(x), Math.Sqrt(1 - x));
-        return distance;
     }
 
     public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
@@ -127,6 +130,18 @@ public class PostcardDataService : IPostcardDataService
         }
         await _postcardDataRepository.Delete(postcardData);
         return _mapper.Map<PostcardDataDto>(postcardData);
+    }
+
+    private static double Measure(double postcardLatitude, double postcardLongitude, double userLatitude, double userLongitude)
+    {
+        double earthRad = 6378137;
+        double diffrentceLatitude = (userLatitude * Math.PI / 180) - (postcardLatitude * Math.PI / 180);
+        double diffrentceLongitude = (userLongitude * Math.PI / 180) - (postcardLongitude * Math.PI / 180);
+        double x = Math.Sin(diffrentceLatitude / 2) * Math.Sin(diffrentceLatitude / 2) +
+                   Math.Cos(postcardLatitude * Math.PI / 180) * Math.Cos(userLatitude * Math.PI / 180) *
+                   Math.Sin(diffrentceLongitude / 2) * Math.Sin(diffrentceLongitude / 2);
+        double distance = 2 * earthRad * Math.Atan2(Math.Sqrt(x), Math.Sqrt(1 - x));
+        return distance;
     }
 
     private async Task<IEnumerable<PostcardData>> GetAllPostcardsDataForPagination(PostcardPaginationRequest postcardPaginationRequest)
