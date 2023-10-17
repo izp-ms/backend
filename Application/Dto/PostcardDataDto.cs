@@ -14,6 +14,7 @@ public class PostcardDataDto : IMap
     public string Longitude { get; set; }
     public string Latitude { get; set; }
     public int CollectRangeInMeters { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public void Mapping(Profile profile)
     {

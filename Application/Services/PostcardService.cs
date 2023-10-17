@@ -1,6 +1,7 @@
 using Application.Dto;
 using Application.Interfaces;
-using Application.Mappings;
+using Application.Mappings.Manual;
+using Application.Requests;
 using Application.Response;
 using Application.Validators;
 using AutoMapper;
@@ -46,8 +47,11 @@ public class PostcardService : IPostcardService
             PostcardId = newPostcard.Id,
             ReceivedAt = DateTime.UtcNow,
         };
+
         await _userPostcardRepository.Insert(userPostcard);
-        return _mapper.Map<PostcardDto>(newPostcard);
+        PostcardDto mappedPostcardDto = _mapper.Map<PostcardDto>(newPostcard);
+        mappedPostcardDto.UserId = postcardDto.UserId;
+        return mappedPostcardDto;
     }
 
     public async Task<PostcardDto> DeletePostcard(int postcardId)
@@ -62,27 +66,27 @@ public class PostcardService : IPostcardService
         return _mapper.Map<PostcardDto>(postcard);
     }
 
-    public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
+    public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(
+        PaginationRequest pagination,
+        FiltersPostcardRequest filters
+    )
     {
-        if (postcardPaginationRequest.UserId == null || _userContextService.GetUserId == null)
+        if (_userContextService.GetUserId == null)
         {
             throw new Exception("User not found");
         }
+        filters.UserId = (int)_userContextService.GetUserId;
+        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId(FiltersMapper.Map(filters));
+        IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
 
-        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId((int)postcardPaginationRequest.UserId);
-        IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(
-            postcardPaginationRequest.PageNumber,
-            postcardPaginationRequest.PageSize,
-            (int)postcardPaginationRequest.UserId);
+        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)filters.UserId);
 
-        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)postcardPaginationRequest.UserId);
-
-        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)postcardPaginationRequest.PageSize);
+        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)pagination.PageSize);
 
         PaginationResponse<PostcardWithDataDto> paginationResponse = new PaginationResponse<PostcardWithDataDto>()
         {
-            PageNumber = postcardPaginationRequest.PageNumber,
-            PageSize = postcardPaginationRequest.PageSize,
+            PageNumber = pagination.PageNumber,
+            PageSize = pagination.PageSize,
             TotalCount = allPostcards.Count(),
             TotalPages = totalPages,
             Content = mappedPostcards

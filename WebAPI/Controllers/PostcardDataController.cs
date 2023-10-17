@@ -1,5 +1,7 @@
 ﻿using Application.Dto;
+using Application.Helpers;
 using Application.Interfaces;
+using Application.Requests;
 using Application.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,17 +32,19 @@ public class PostcardDataController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedPostcardData([FromQuery] int pageNumber, [FromQuery] int pageSize, [FromQuery] int? userId)
+    public async Task<IActionResult> GetPaginatedPostcardData(
+        [FromQuery] PaginationRequest pagination,
+        [FromQuery] FiltersPostcardDataRequest filters
+    )
     {
         _logger.Log(LogLevel.Information, "Get postcard data");
-        string cacheKey = $"postcard-{pageNumber}-{pageSize}-{userId}-{_userContextService.GetUserId}";
-        PostcardPaginationRequest postcardPaginationRequest = new PostcardPaginationRequest() { PageNumber = pageNumber, PageSize = pageSize, UserId = userId };
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
 
         try
         {
             if (!_cache.TryGetValue(cacheKey, out PaginationResponse<PostcardDataDto> postcardData))
             {
-                postcardData = await _postcardDataService.GetPagination(postcardPaginationRequest);
+                postcardData = await _postcardDataService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5))
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
@@ -79,7 +83,7 @@ public class PostcardDataController : ControllerBase
     public async Task<IActionResult> GetNewPostcard([FromBody] CoordinateRequest coordinateRequest)
     {
         _logger.Log(LogLevel.Information, "Get new postcard data");
-        string cacheKey = $"postcard-{coordinateRequest.Latitude}-{coordinateRequest.Longitude}-{_userContextService.GetUserId}";
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, coordinateRequest);
         try
         {
             if (!_cache.TryGetValue(cacheKey, out CurrentLocationPostcardsResponse postcardData))

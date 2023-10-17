@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Requests;
 
 namespace Application.Interfaces;
 

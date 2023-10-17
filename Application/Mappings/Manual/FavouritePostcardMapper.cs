@@ -1,7 +1,7 @@
-using Application.Dto;
+using Application.Requests;
 using Domain.Entities;
 
-namespace Application.Mappings;
+namespace Application.Mappings.Manual;
 
 public static class FavouritePostcardMapper
 {

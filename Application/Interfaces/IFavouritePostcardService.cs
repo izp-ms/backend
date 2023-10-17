@@ -1,5 +1,5 @@
 ﻿using Application.Dto;
-using Domain.Entities;
+using Application.Requests;
 
 namespace Application.Interfaces;
 

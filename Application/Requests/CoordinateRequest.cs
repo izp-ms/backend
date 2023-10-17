@@ -1,4 +1,4 @@
-namespace Application.Dto;
+namespace Application.Requests;
 
 public class CoordinateRequest
 {
