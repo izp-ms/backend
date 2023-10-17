@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
+using Application.Requests;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;

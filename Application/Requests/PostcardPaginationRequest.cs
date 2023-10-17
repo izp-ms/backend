@@ -1,6 +1,6 @@
-namespace Application.Dto;
+namespace Application.Requests;
 
-public class PostcardPaginationRequest : PaginationRequest
+public class PaginatedPostcardDataRequest : PaginationRequest
 {
   public int? UserId { get; set; }
 }

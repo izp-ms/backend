@@ -1,6 +1,7 @@
 using Application.Dto;
 using Application.Helpers;
 using Application.Interfaces;
+using Application.Requests;
 using Application.Response;
 using AutoMapper;
 using Domain.Entities;
@@ -96,7 +97,7 @@ public class PostcardDataService : IPostcardDataService
         };
     }
 
-    public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PostcardPaginationRequest postcardPaginationRequest)
+    public async Task<PaginationResponse<PostcardDataDto>> GetPagination(PaginatedPostcardDataRequest postcardPaginationRequest)
     {
         IEnumerable<PostcardData> allPostcardsData = await GetAllPostcardsDataForPagination(postcardPaginationRequest);
         IEnumerable<PostcardData> postcardsData = await GetPostcardsDataForPagination(postcardPaginationRequest);
@@ -144,28 +145,28 @@ public class PostcardDataService : IPostcardDataService
         return distance;
     }
 
-    private async Task<IEnumerable<PostcardData>> GetAllPostcardsDataForPagination(PostcardPaginationRequest postcardPaginationRequest)
+    private async Task<IEnumerable<PostcardData>> GetAllPostcardsDataForPagination(PaginatedPostcardDataRequest request)
     {
-        if (postcardPaginationRequest.UserId == null)
+        if (request.UserId == null)
         {
             return await _postcardDataRepository.GetAll();
         }
-        return await _postcardDataRepository.GetAllPostcardsDataByUserId((int)postcardPaginationRequest.UserId);
+        return await _postcardDataRepository.GetAllPostcardsDataByUserId((int)request.UserId);
     }
 
-    private async Task<IEnumerable<PostcardData>> GetPostcardsDataForPagination(PostcardPaginationRequest postcardPaginationRequest)
+    private async Task<IEnumerable<PostcardData>> GetPostcardsDataForPagination(PaginatedPostcardDataRequest request)
     {
-        if (postcardPaginationRequest.UserId == null)
+        if (request.UserId == null)
         {
             return await _postcardDataRepository.GetPagination(
-                postcardPaginationRequest.PageNumber,
-                postcardPaginationRequest.PageSize
+                request.PageNumber,
+                request.PageSize
             );
         }
         return await _postcardDataRepository.GetPaginationByUserId(
-            postcardPaginationRequest.PageNumber,
-            postcardPaginationRequest.PageSize,
-            (int)postcardPaginationRequest.UserId
+            request.PageNumber,
+            request.PageSize,
+            (int)request.UserId
         );
     }
 }
