@@ -63,27 +63,30 @@ public class PostcardService : IPostcardService
         return _mapper.Map<PostcardDto>(postcard);
     }
 
-    public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(PaginatedPostcardDataRequest request)
+    public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(
+        PaginationRequest pagination,
+        FiltersPostcardRequest filters
+    )
     {
-        if (request.UserId == null || _userContextService.GetUserId == null)
+        if (filters.UserId == null || _userContextService.GetUserId == null)
         {
             throw new Exception("User not found");
         }
 
-        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId((int)request.UserId);
+        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId((int)filters.UserId);
         IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(
-            request.PageNumber,
-            request.PageSize,
-            (int)request.UserId);
+            pagination.PageNumber,
+            pagination.PageSize,
+            (int)filters.UserId);
 
-        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)request.UserId);
+        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)filters.UserId);
 
-        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)request.PageSize);
+        int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)pagination.PageSize);
 
         PaginationResponse<PostcardWithDataDto> paginationResponse = new PaginationResponse<PostcardWithDataDto>()
         {
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize,
+            PageNumber = pagination.PageNumber,
+            PageSize = pagination.PageSize,
             TotalCount = allPostcards.Count(),
             TotalPages = totalPages,
             Content = mappedPostcards

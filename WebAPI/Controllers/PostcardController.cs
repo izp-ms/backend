@@ -31,21 +31,24 @@ public class PostcardController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedPostcardsByUserId([FromQuery] PaginatedPostcardDataRequest request)
+    public async Task<IActionResult> GetPaginatedPostcardsByUserId(
+        [FromQuery] PaginationRequest pagination,
+        [FromQuery] FiltersPostcardRequest filters
+    )
     {
         _logger.Log(LogLevel.Information, "Get postcards");
-        if (request.UserId == 0)
+        if (filters.UserId == 0)
         {
             return BadRequest(new { message = "User id is required" });
         }
 
-        string cacheKey = $"postcard-{request.PageNumber}-{request.PageSize}-{request.UserId}-{_userContextService.GetUserId}";
+        string cacheKey = $"postcard-{pagination.PageNumber}-{pagination.PageSize}-{filters.UserId}-{_userContextService.GetUserId}";
 
         try
         {
             if (!_cache.TryGetValue(cacheKey, out PaginationResponse<PostcardWithDataDto> postcards))
             {
-                postcards = await _postcardService.GetPagination(request);
+                postcards = await _postcardService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(5))
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
