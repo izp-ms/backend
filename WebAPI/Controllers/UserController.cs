@@ -30,12 +30,6 @@ public class UserController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("test")]
-    public IActionResult Test()
-    {
-        return Ok("Test");
-    }
-
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetUser([FromQuery] int userId)
