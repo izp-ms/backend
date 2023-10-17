@@ -86,6 +86,7 @@ public class PostcardController : ControllerBase
     public async Task<IActionResult> AddPostcard([FromBody] PostcardDto postcardDto)
     {
         _logger.Log(LogLevel.Information, "Add postcard");
+        postcardDto.UserId = (int)_userContextService.GetUserId;
         try
         {
             PostcardDto newPostcard = await _postcardService.AddNewPostcard(postcardDto);
@@ -120,6 +121,7 @@ public class PostcardController : ControllerBase
     public async Task<IActionResult> UpdatePostcard([FromBody] PostcardDto postcardDto)
     {
         _logger.Log(LogLevel.Information, "Update postcard");
+        postcardDto.UserId = (int)_userContextService.GetUserId;
         try
         {
             PostcardDto updatedPostcard = await _postcardService.UpdatePostcard(postcardDto);

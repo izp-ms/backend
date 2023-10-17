@@ -75,6 +75,7 @@ public class UserController : ControllerBase
                 _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to update user with id: {userUpdateDto.Id}");
                 return BadRequest(new { message = "Unauthorized" });
             }
+            userUpdateDto.Id = (int)_userContextService.GetUserId;
             UserUpdateDto updatedUser = await _userService.UpdateUser(userUpdateDto);
             _logger.Log(LogLevel.Information, $"Updated user with id: {updatedUser.Id}");
 
