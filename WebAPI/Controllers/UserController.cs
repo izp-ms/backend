@@ -141,7 +141,7 @@ public class UserController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to delete user: {ex.Message}");
-            return BadRequest(new { message = $"Failed to delete user: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 

@@ -53,7 +53,7 @@ public class PostcardDataController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get postcard data: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get postcard data: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -70,7 +70,7 @@ public class PostcardDataController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to add postcard data: {ex.Message}");
-            return BadRequest(new { message = $"Failed to add postcard data: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -97,7 +97,7 @@ public class PostcardDataController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get new postcard data: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get new postcard data: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -114,7 +114,7 @@ public class PostcardDataController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to delete postcard data: {ex.Message}");
-            return BadRequest(new { message = $"Failed to delete postcard data: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }

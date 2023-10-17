@@ -33,7 +33,7 @@ public class UserStatsController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get user stats: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get user stats: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -55,7 +55,7 @@ public class UserStatsController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update user stats: {ex.Message}");
-            return BadRequest(new { message = $"Failed to update user stats: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }

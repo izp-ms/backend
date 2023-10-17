@@ -96,6 +96,29 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.PostcardData, opt => opt.MapFrom(src => src.PostcardData));
+
+            cfg.CreateMap<FavouritePostcard, FavouritePostcardDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.PostcardId, opt => opt.MapFrom(src => src.PostcardId))
+                .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.Order))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Postcard.Title))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Postcard.Content))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Postcard.Type))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Postcard.CreatedAt))
+                .ForMember(dest => dest.IsSent, opt => opt.MapFrom(src => src.Postcard.IsSent))
+                .ForMember(dest => dest.ImageBase64, opt => opt.MapFrom(src => src.Postcard.PostcardData.ImageBase64))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Postcard.PostcardData.Country))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Postcard.PostcardData.City))
+                .ForMember(dest => dest.PostcardDataTitle, opt => opt.MapFrom(src => src.Postcard.PostcardData.Title))
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Postcard.PostcardData.Longitude))
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Postcard.PostcardData.Latitude))
+                .ForMember(dest => dest.CollectRangeInMeters, opt => opt.MapFrom(src => src.Postcard.PostcardData.CollectRangeInMeters));
+
+            cfg.CreateMap<UpdateFavouritePostcardRequest, FavouritePostcard>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.PostcardId, opt => opt.MapFrom(src => src.PostcardIdsWithOrders.Select(p => p.PostcardId)))
+                .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.PostcardIdsWithOrders.Select(p => p.OrderId)));
         })
             .CreateMapper();
     }

@@ -58,7 +58,7 @@ public class PostcardController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get postcards: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get postcards: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -74,7 +74,7 @@ public class PostcardController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get postcard: {ex.Message}");
-            return BadRequest(new { message = $"Failed to get postcard: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -91,7 +91,7 @@ public class PostcardController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to add postcard: {ex.Message}");
-            return BadRequest(new { message = $"Failed to add postcard: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -108,7 +108,7 @@ public class PostcardController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to transfer postcard: {ex.Message}");
-            return BadRequest(new { message = $"Failed to transfer postcard: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -125,7 +125,7 @@ public class PostcardController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update postcard: {ex.Message}");
-            return BadRequest(new { message = $"Failed to update postcard: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
@@ -142,7 +142,7 @@ public class PostcardController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to delete postcard: {ex.Message}");
-            return BadRequest(new { message = $"Failed to delete postcard: {ex.Message}" });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }
