@@ -1,5 +1,6 @@
 using Application.Dto;
 using Application.Interfaces;
+using Application.Mappings;
 using Application.Response;
 using Application.Validators;
 using AutoMapper;

@@ -1,6 +1,8 @@
 using Application.Dto;
 using Domain.Entities;
 
+namespace Application.Mappings;
+
 public static class PostcardWithDataDtoMapper
 {
     public static IEnumerable<PostcardWithDataDto> Map(IEnumerable<Postcard> postcards, int userId)

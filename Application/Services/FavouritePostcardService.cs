@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
+using Application.Mappings;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -36,9 +37,14 @@ public class FavouritePostcardService : IFavouritePostcardService
             throw new ArgumentNullException(nameof(favouritePostcardDtos));
         }
 
-        if (await IsPostcardIdValid(favouritePostcardDtos))
+        if (!await IsPostcardIdValid(favouritePostcardDtos))
         {
             throw new ArgumentException("User doesn't have postcard with given ids");
+        }
+
+        if (!IsOrderCorrect(favouritePostcardDtos))
+        {
+            throw new ArgumentException("Order must be between 1 and 6 and must be unique");
         }
 
         IEnumerable<FavouritePostcard> favouritePostcards = await _favouritePostcardRepository.GetFavouritePostcardByUserId(favouritePostcardDtos.UserId);
@@ -48,7 +54,7 @@ public class FavouritePostcardService : IFavouritePostcardService
             await _favouritePostcardRepository.DeleteRange(favouritePostcards);
         }
 
-        IEnumerable<FavouritePostcard> mappedFavouritePostcards = _mapper.Map<IEnumerable<FavouritePostcard>>(favouritePostcardDtos);
+        IEnumerable<FavouritePostcard> mappedFavouritePostcards = FavouritePostcardMapper.Map(favouritePostcardDtos);
         await _favouritePostcardRepository.InsertRange(mappedFavouritePostcards);
         IEnumerable<FavouritePostcardDto> updatedFavouritePostcard = _mapper.Map<IEnumerable<FavouritePostcardDto>>(mappedFavouritePostcards);
 
@@ -61,11 +67,26 @@ public class FavouritePostcardService : IFavouritePostcardService
 
         return userPostcards.ToList().Where(postcard =>
         {
-            if (!favouritePostcardDtos.PostcardIds.Contains(postcard.PostcardId))
+            if (!favouritePostcardDtos.PostcardIdsWithOrders.Any(data => data.PostcardId == postcard.PostcardId))
             {
                 return true;
             }
             return false;
         }).Any();
+    }
+
+    private bool IsOrderCorrect(UpdateFavouritePostcardRequest favouritePostcardDtos)
+    {
+        if (favouritePostcardDtos.PostcardIdsWithOrders.Any(data => data.OrderId < 1 || data.OrderId > 6))
+        {
+            return false;
+        }
+
+        List<IGrouping<int, PostcardIdWithOrderId>> duplicates = favouritePostcardDtos.PostcardIdsWithOrders
+            .GroupBy(data => data.OrderId)
+            .Where(group => group.Count() > 1)
+            .ToList();
+
+        return duplicates.Count == 0;
     }
 }

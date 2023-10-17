@@ -116,18 +116,9 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.CollectRangeInMeters, opt => opt.MapFrom(src => src.Postcard.PostcardData.CollectRangeInMeters));
 
             cfg.CreateMap<UpdateFavouritePostcardRequest, FavouritePostcard>()
-            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-            .ForMember(dest => dest.PostcardId, opt => opt.MapFrom(src => src.PostcardIds))
-            .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.Orders));
-
-            cfg.CreateMap<UpdateFavouritePostcardRequest, FavouritePostcard[]>()
-                .ConstructUsing(src =>
-                    src.PostcardIds.Select((id, index) => new FavouritePostcard
-                    {
-                        UserId = src.UserId,
-                        PostcardId = id,
-                        Order = src.Orders.ElementAtOrDefault(index)
-                    }).ToArray());
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.PostcardId, opt => opt.MapFrom(src => src.PostcardIdsWithOrders.Select(p => p.PostcardId)))
+                .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.PostcardIdsWithOrders.Select(p => p.OrderId)));
         })
             .CreateMapper();
     }
