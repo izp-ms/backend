@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Helpers;
 using Application.Interfaces;
 using Application.Response;
 using Domain.Entities;
@@ -40,7 +41,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUser([FromQuery] int userId)
     {
         _logger.Log(LogLevel.Information, "Get user information");
-        string cacheKey = $"user-{userId}-{_userContextService.GetUserId}";
+        string cacheKey = CacheKeyGenerator.GetKey(userId, _userContextService.GetUserId);
 
         try
         {
@@ -77,7 +78,7 @@ public class UserController : ControllerBase
             UserUpdateDto updatedUser = await _userService.UpdateUser(userUpdateDto);
             _logger.Log(LogLevel.Information, $"Updated user with id: {updatedUser.Id}");
 
-            string cacheKey = $"user-{userUpdateDto.Id}-{_userContextService.GetUserId}";
+            string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, userUpdateDto);
             _cache.Remove(cacheKey);
 
             return Ok(updatedUser);

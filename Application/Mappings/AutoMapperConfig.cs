@@ -114,7 +114,8 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.PostcardDataTitle, opt => opt.MapFrom(src => src.Postcard.PostcardData.Title))
                 .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Postcard.PostcardData.Longitude))
                 .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Postcard.PostcardData.Latitude))
-                .ForMember(dest => dest.CollectRangeInMeters, opt => opt.MapFrom(src => src.Postcard.PostcardData.CollectRangeInMeters));
+                .ForMember(dest => dest.CollectRangeInMeters, opt => opt.MapFrom(src => src.Postcard.PostcardData.CollectRangeInMeters))
+                .ForMember(dest => dest.PostcardDataCreatedAt, opt => opt.MapFrom(src => src.Postcard.PostcardData.CreatedAt));
 
             cfg.CreateMap<UpdateFavouritePostcardRequest, FavouritePostcard>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))

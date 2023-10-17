@@ -18,6 +18,7 @@ public class PostcardDataSeeder
                 Latitude = "50.30092",
                 CollectRangeInMeters = 150,
                 Title = "Palmiarnia",
+                CreatedAt = new DateTime(2020, 1, 12),
             },
             new PostcardData()// ID: 1
             {
@@ -28,6 +29,7 @@ public class PostcardDataSeeder
                 Latitude = "50.31339",
                 CollectRangeInMeters = 100,
                 Title = "Radiostacja Gliwicka",
+                CreatedAt = new DateTime(2020, 1, 12),
             },
 
             // Katowice
@@ -40,6 +42,7 @@ public class PostcardDataSeeder
                 Latitude = "50.26377",
                 CollectRangeInMeters = 100,
                 Title = "Muzeum Śląskie",
+                CreatedAt = new DateTime(2020, 1, 12),
             },
             new PostcardData()// ID: 3
             {
@@ -50,6 +53,7 @@ public class PostcardDataSeeder
                 Latitude = "50.26614",
                 CollectRangeInMeters = 100,
                 Title = "Arena Spodek",
+                CreatedAt = new DateTime(2021, 3, 15),
             },
             
             // Kraków
@@ -62,6 +66,7 @@ public class PostcardDataSeeder
                 Latitude = "50.05416",
                 CollectRangeInMeters = 250,
                 Title = "Zamek Królewski na Wawelu",
+                CreatedAt = new DateTime(2021, 3, 15),
             },
             new PostcardData()// ID: 5
             {
@@ -72,6 +77,7 @@ public class PostcardDataSeeder
                 Latitude = "50.06371",
                 CollectRangeInMeters = 150,
                 Title = "Ogród Botaniczny Uniwersytetu Jagiellońskiego",
+                CreatedAt = new DateTime(2021, 3, 15),
             },
 
             // Rybnik
@@ -84,6 +90,7 @@ public class PostcardDataSeeder
                 Latitude = "50.10896",
                 CollectRangeInMeters = 150,
                 Title = "Stadion MOSiR - Żużel",
+                CreatedAt = new DateTime(2021, 3, 15),
             },
 
             // Chorzów
@@ -96,6 +103,7 @@ public class PostcardDataSeeder
                 Latitude = "50.29127",
                 CollectRangeInMeters = 200,
                 Title = "Planetarium Śląskie",
+                CreatedAt = new DateTime(2022, 7, 23),
             },
             new PostcardData()// ID: 8
             {
@@ -106,6 +114,7 @@ public class PostcardDataSeeder
                 Latitude = "50.17934",
                 CollectRangeInMeters = 200,
                 Title = "Śląski Ogród Botaniczny - Ogród Czerwony",
+                CreatedAt = new DateTime(2022, 7, 23),
             },
 
             // Warszawa
@@ -118,6 +127,7 @@ public class PostcardDataSeeder
                 Latitude = "52.23192",
                 CollectRangeInMeters = 200,
                 Title = "Pałac Kultury i Nauki",
+                CreatedAt = new DateTime(2022, 7, 23),
             },
 
             // Łódź
@@ -130,6 +140,7 @@ public class PostcardDataSeeder
                 Latitude = "51.76388",
                 CollectRangeInMeters = 300,
                 Title = "Orientarium ZOO",
+                CreatedAt = new DateTime(2022, 7, 23),
             },
 
             // Szczecin
@@ -142,6 +153,7 @@ public class PostcardDataSeeder
                 Latitude = "53.44548",
                 CollectRangeInMeters = 200,
                 Title = "Teatr Letni im. Heleny Majdaniec",
+                CreatedAt = new DateTime(2022, 7, 23),
             },
 
             // Gdańsk
@@ -154,6 +166,7 @@ public class PostcardDataSeeder
                 Latitude = "54.40715",
                 CollectRangeInMeters = 100,
                 Title = "Westerplatte",
+                CreatedAt = new DateTime(2023, 9, 13),
             },
 
             // Sopot
@@ -166,6 +179,7 @@ public class PostcardDataSeeder
                 Latitude = "54.44659",
                 CollectRangeInMeters = 100,
                 Title = "Molo w Sopocie",
+                CreatedAt = new DateTime(2023, 9, 13),
             },
 
             // Wrocław
@@ -178,6 +192,7 @@ public class PostcardDataSeeder
                 Latitude = "51.11140",
                 CollectRangeInMeters = 100,
                 Title = "Fontanna Alegoria Walki i Zwycięstwa",
+                CreatedAt = new DateTime(2023, 9, 13),
             },
 
             // Poznań
@@ -190,6 +205,7 @@ public class PostcardDataSeeder
                 Latitude = "52.40814",
                 CollectRangeInMeters = 150,
                 Title = "Zamek Cesarski",
+                CreatedAt = new DateTime(2023, 9, 13),
             },
             new PostcardData()// ID:  16
             {
@@ -200,6 +216,7 @@ public class PostcardDataSeeder
                 Latitude = "52.41830",
                 CollectRangeInMeters = 10,
                 Title = "Climbing Spot",
+                CreatedAt = new DateTime(2023, 9, 13),
             },
 
             // Hel
@@ -212,6 +229,7 @@ public class PostcardDataSeeder
                 Latitude = "54.64244",
                 CollectRangeInMeters = 4000,
                 Title = "Hel",
+                CreatedAt = new DateTime(2023, 9, 13),
             },
 
             // Białystok
@@ -224,6 +242,7 @@ public class PostcardDataSeeder
                 Latitude = "53.13005",
                 CollectRangeInMeters = 300,
                 Title = "Opera i Filharmonia Podlaska",
+                CreatedAt = new DateTime(2023, 9, 13),
             },
 
             // Zakopane
@@ -236,6 +255,7 @@ public class PostcardDataSeeder
                 Latitude = "49.29273",
                 CollectRangeInMeters = 50,
                 Title = "Mostek na Krupówkach",
+                CreatedAt = new DateTime(2023, 9, 13),
             }
         };
         return postcardData;

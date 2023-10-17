@@ -71,11 +71,11 @@ public class PostcardService : IPostcardService
         FiltersPostcardRequest filters
     )
     {
-        if (filters.UserId == null || _userContextService.GetUserId == null)
+        if (_userContextService.GetUserId == null)
         {
             throw new Exception("User not found");
         }
-
+        filters.UserId = (int)_userContextService.GetUserId;
         IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId(FiltersMapper.Map(filters));
         IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
 

@@ -18,4 +18,21 @@ public static class FiltersMapper
             OrderBy = request.OrderBy
         };
     }
+
+    public static FiltersPostcardData Map(FiltersPostcardDataRequest request)
+    {
+        return new FiltersPostcardData
+        {
+            Search = request.Search,
+            City = request.City,
+            Country = request.Country,
+            Longitude = request.Longitude,
+            Latitude = request.Latitude,
+            CollectRangeInMeters = request.CollectRangeInMeters,
+            DateFrom = request.DateFrom,
+            DateTo = request.DateTo,
+            UserId = request.UserId,
+            OrderBy = request.OrderBy
+        };
+    }
 }

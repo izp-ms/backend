@@ -22,6 +22,7 @@ public class FavouritePostcardDto : IMap
     public string Longitude { get; set; }
     public string Latitude { get; set; }
     public int CollectRangeInMeters { get; set; }
+    public DateTime PostcardDataCreatedAt { get; set; }
 
     public void Mapping(Profile profile)
     {

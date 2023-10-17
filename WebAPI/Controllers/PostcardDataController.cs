@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Helpers;
 using Application.Interfaces;
 using Application.Requests;
 using Application.Response;
@@ -33,11 +34,11 @@ public class PostcardDataController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetPaginatedPostcardData(
         [FromQuery] PaginationRequest pagination,
-        [FromQuery] FiltersPostcardRequest filters
+        [FromQuery] FiltersPostcardDataRequest filters
     )
     {
         _logger.Log(LogLevel.Information, "Get postcard data");
-        string cacheKey = $"postcard-{pagination.PageNumber}-{pagination.PageSize}-{filters.UserId}-{_userContextService.GetUserId}";
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
 
         try
         {
@@ -82,7 +83,7 @@ public class PostcardDataController : ControllerBase
     public async Task<IActionResult> GetNewPostcard([FromBody] CoordinateRequest coordinateRequest)
     {
         _logger.Log(LogLevel.Information, "Get new postcard data");
-        string cacheKey = $"postcard-{coordinateRequest.Latitude}-{coordinateRequest.Longitude}-{_userContextService.GetUserId}";
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, coordinateRequest);
         try
         {
             if (!_cache.TryGetValue(cacheKey, out CurrentLocationPostcardsResponse postcardData))

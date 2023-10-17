@@ -7,7 +7,7 @@ namespace Application.Interfaces;
 public interface IPostcardDataService
 {
     Task<PostcardDataDto> AddNewPostcardData(PostcardDataDto postcardData);
-    Task<PaginationResponse<PostcardDataDto>> GetPagination(PaginationRequest pagination, FiltersPostcardRequest filters);
+    Task<PaginationResponse<PostcardDataDto>> GetPagination(PaginationRequest pagination, FiltersPostcardDataRequest filters);
     Task<CurrentLocationPostcardsResponse> GetPostcardsNearby(CoordinateRequest coordinateRequest);
     Task<PostcardDataDto> DeletePostcardData(int postcardDataId);
 }

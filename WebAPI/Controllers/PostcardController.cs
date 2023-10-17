@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Helpers;
 using Application.Interfaces;
 using Application.Requests;
 using Application.Response;
@@ -42,7 +43,7 @@ public class PostcardController : ControllerBase
             return BadRequest(new { message = "User id is required" });
         }
 
-        string cacheKey = $"postcard-{pagination.PageNumber}-{pagination.PageSize}-{filters.UserId}-{_userContextService.GetUserId}";
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
 
         try
         {
