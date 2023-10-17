@@ -1,6 +1,6 @@
 using Application.Dto;
 using Application.Interfaces;
-using Application.Mappings;
+using Application.Mappings.Manual;
 using Application.Requests;
 using Application.Response;
 using Application.Validators;
@@ -47,8 +47,11 @@ public class PostcardService : IPostcardService
             PostcardId = newPostcard.Id,
             ReceivedAt = DateTime.UtcNow,
         };
+
         await _userPostcardRepository.Insert(userPostcard);
-        return _mapper.Map<PostcardDto>(newPostcard);
+        PostcardDto mappedPostcardDto = _mapper.Map<PostcardDto>(newPostcard);
+        mappedPostcardDto.UserId = postcardDto.UserId;
+        return mappedPostcardDto;
     }
 
     public async Task<PostcardDto> DeletePostcard(int postcardId)
@@ -73,11 +76,8 @@ public class PostcardService : IPostcardService
             throw new Exception("User not found");
         }
 
-        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId((int)filters.UserId);
-        IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(
-            pagination.PageNumber,
-            pagination.PageSize,
-            (int)filters.UserId);
+        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId(FiltersMapper.Map(filters));
+        IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
 
         IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)filters.UserId);
 

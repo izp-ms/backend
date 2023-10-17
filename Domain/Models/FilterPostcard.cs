@@ -1,8 +1,6 @@
-using Infrastructure.Models;
+namespace Infrastructure.Models;
 
-namespace Application.Requests;
-
-public class FiltersPostcardRequest
+public class FiltersPostcard
 {
     public string Search { get; set; }
     public string Type { get; set; }
