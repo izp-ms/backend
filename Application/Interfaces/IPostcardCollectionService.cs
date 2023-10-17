@@ -4,5 +4,5 @@ namespace Application.Interfaces;
 
 public interface IPostcardCollectionService
 {
-    Task<IEnumerable<PostcardCollectionDto>> GetPostcardCollection(int userId);
+    Task<PostcardCollectionDto> GetPostcardCollection(int userId);
 }

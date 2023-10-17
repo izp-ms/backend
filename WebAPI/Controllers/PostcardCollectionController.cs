@@ -25,7 +25,7 @@ public class PostcardCollectionController : ControllerBase
         _logger.Log(LogLevel.Information, "Get postcard collection");
         try
         {
-            IEnumerable<PostcardCollectionDto> postcardCollectionDto = await _postcardCollectionService.GetPostcardCollection(userId);
+            PostcardCollectionDto postcardCollectionDto = await _postcardCollectionService.GetPostcardCollection(userId);
             return Ok(postcardCollectionDto);
         }
         catch (Exception ex)

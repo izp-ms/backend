@@ -93,11 +93,6 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.PostcardsReceived, opt => opt.MapFrom(src => src.Friend.UsersStats.PostcardsReceived))
                 .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Friend.UsersStats.Score));
 
-            cfg.CreateMap<PostcardCollection, PostcardCollectionDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.PostcardData, opt => opt.MapFrom(src => src.PostcardData));
-
             cfg.CreateMap<FavouritePostcard, FavouritePostcardDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
