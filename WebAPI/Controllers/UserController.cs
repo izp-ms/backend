@@ -73,7 +73,7 @@ public class UserController : ControllerBase
             UserUpdateDto updatedUser = await _userService.UpdateUser(userUpdateDto);
             _logger.Log(LogLevel.Information, $"Updated user with id: {updatedUser.Id}");
 
-            string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, userUpdateDto);
+            string cacheKey = CacheKeyGenerator.GetKey(userUpdateDto.Id, _userContextService.GetUserId);
             _cache.Remove(cacheKey);
 
             return Ok(updatedUser);
