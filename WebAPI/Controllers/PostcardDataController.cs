@@ -78,6 +78,26 @@ public class PostcardDataController : ControllerBase
         }
     }
 
+    [HttpPost("Collect")]
+    public async Task<IActionResult> CollectPostcardDate([FromBody] CollectPostcardDataRequest request)
+    {
+        _logger.Log(LogLevel.Information, "Collect postcard data");
+        try
+        {
+            PostcardDto newPostcardWithData = await _postcardDataService.CollectPostcardData(
+                (int)_userContextService.GetUserId,
+                request.PostcardDataId,
+                request.CoordinateRequest
+            );
+            _logger.Log(LogLevel.Information, $"Collected postcard data with id: {newPostcardWithData.Id}");
+            return Ok(newPostcardWithData);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to collect postcard data: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 
     [HttpPost("NewPostcard")]
     public async Task<IActionResult> GetNewPostcard([FromBody] CoordinateRequest coordinateRequest)
@@ -101,6 +121,23 @@ public class PostcardDataController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get new postcard data: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdatePostcardData([FromBody] PostcardDataDto postcardDataDto)
+    {
+        _logger.Log(LogLevel.Information, "Update postcard data");
+        try
+        {
+            PostcardDataDto updatedPostcardData = await _postcardDataService.UpdatePostcardData(postcardDataDto);
+            _logger.Log(LogLevel.Information, $"Updated postcard data with id: {updatedPostcardData.Id}");
+            return Ok(updatedPostcardData);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to update postcard data: {ex.Message}");
             return BadRequest(new { message = ex.Message });
         }
     }

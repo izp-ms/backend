@@ -67,7 +67,7 @@ public class PostcardService : IPostcardService
         IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId(FiltersMapper.Map(filters));
         IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
 
-        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)filters.UserId);
+        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, filters.UserId);
 
         int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)pagination.PageSize);
 
