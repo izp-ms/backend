@@ -88,31 +88,13 @@ public class PostcardController : ControllerBase
         _logger.Log(LogLevel.Information, "Transfer postcard");
         try
         {
-            UserPostcardDto userPostcard = await _postcardService.TransferPostcard(transferPostcardRequest.PostcardId, transferPostcardRequest.NewUserId);
+            UserPostcardDto userPostcard = await _postcardService.TransferPostcard(transferPostcardRequest.NewUserId, transferPostcardRequest.PostcardDto);
             _logger.Log(LogLevel.Information, $"Transferred postcard with id: {userPostcard.PostcardId} to user with id: {userPostcard.UserId}");
             return Ok(userPostcard);
         }
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to transfer postcard: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> UpdatePostcard([FromBody] PostcardDto postcardDto)
-    {
-        _logger.Log(LogLevel.Information, "Update postcard");
-        postcardDto.UserId = (int)_userContextService.GetUserId;
-        try
-        {
-            PostcardDto updatedPostcard = await _postcardService.UpdatePostcard(postcardDto);
-            _logger.Log(LogLevel.Information, $"Updated postcard with id: {updatedPostcard.Id}");
-            return Ok(updatedPostcard);
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to update postcard: {ex.Message}");
             return BadRequest(new { message = ex.Message });
         }
     }

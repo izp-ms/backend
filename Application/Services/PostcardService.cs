@@ -89,15 +89,15 @@ public class PostcardService : IPostcardService
         return _mapper.Map<PostcardDto>(postcard);
     }
 
-    public async Task<UserPostcardDto> TransferPostcard(int postcardId, int newUserId)
+    public async Task<UserPostcardDto> TransferPostcard(int newUserId, PostcardDto postcardDto)
     {
-        UserPostcard userPostcard = await _userPostcardRepository.GetUserPostcardByPostcardId(postcardId);
+        UserPostcard userPostcard = await _userPostcardRepository.GetUserPostcardByPostcardId(postcardDto.Id);
         if (!PostcardTransferValidator.IsPostcardValid(userPostcard, newUserId, _userContextService.GetUserId))
         {
             throw new Exception("Postcard is not valid");
         }
 
-        PostcardDto postcard = await GetPostcardById(postcardId);
+        PostcardDto postcard = await GetPostcardById(postcardDto.Id);
         UserStatDto sender = await _userStatsService.GetUserStatsById(_userContextService.GetUserId ?? userPostcard.UserId);
         UserStatDto receiver = await _userStatsService.GetUserStatsById(newUserId);
 
@@ -116,6 +116,8 @@ public class PostcardService : IPostcardService
         receiver.PostcardsReceived++;
         receiver.Score++;
         postcard.IsSent = true;
+        postcard.Title = postcardDto.Title;
+        postcard.Content = postcardDto.Content;
 
         await UpdatePostcard(postcard);
         await _userStatsService.UpdateUserStats(sender);
