@@ -22,18 +22,6 @@ public class DataSeeder
             _dataContext.SaveChanges();
         }
 
-        if (!_dataContext.PostcardData.Any())
-        {
-            _dataContext.PostcardData.AddRange(PostcardDataSeeder.GetPostcardDataSeeder());
-            _dataContext.SaveChanges();
-        }
-
-        if (!_dataContext.Postcards.Any())
-        {
-            _dataContext.Postcards.AddRange(PostcardSeeder.GetPostcardSeeder(_dataContext));
-            _dataContext.SaveChanges();
-        }
-
         if (!_dataContext.UsersDetails.Any())
         {
             _dataContext.UsersDetails.AddRange(UserDetailSeeder.GetUsersDetailsSeeder(_dataContext));
@@ -52,22 +40,34 @@ public class DataSeeder
             _dataContext.SaveChanges();
         }
 
-        if (!_dataContext.UserPostcards.Any())
-        {
-            _dataContext.UserPostcards.AddRange(UserPostcardSeeder.GetUserPostcardsSeeder(_dataContext));
-            _dataContext.SaveChanges();
-        }
-
         if (!_dataContext.UserFriends.Any())
         {
             _dataContext.UserFriends.AddRange(UserFriendSeeder.GetUserFriendsSeeder(_dataContext));
             _dataContext.SaveChanges();
         }
 
-        if (!_dataContext.PostcardCollection.Any())
+        if (!_dataContext.PostcardData.Any())
         {
-            _dataContext.PostcardCollection.AddRange(PostcardCollectionSeeder.GetPostcardCollectionSeeder(_dataContext));
+            _dataContext.PostcardData.AddRange(PostcardDataSeeder.GetPostcardDataSeeder());
             _dataContext.SaveChanges();
         }
+
+        //if (!_dataContext.Postcards.Any())
+        //{
+        //    _dataContext.Postcards.AddRange(PostcardSeeder.GetPostcardSeeder(_dataContext));
+        //    _dataContext.SaveChanges();
+        //}
+
+        //if (!_dataContext.UserPostcards.Any())
+        //{
+        //    _dataContext.UserPostcards.AddRange(UserPostcardSeeder.GetUserPostcardsSeeder(_dataContext));
+        //    _dataContext.SaveChanges();
+        //}
+
+        //if (!_dataContext.PostcardCollection.Any())
+        //{
+        //    _dataContext.PostcardCollection.AddRange(PostcardCollectionSeeder.GetPostcardCollectionSeeder(_dataContext));
+        //    _dataContext.SaveChanges();
+        //}
     }
 }

@@ -82,72 +82,19 @@ public class PostcardController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public async Task<IActionResult> AddPostcard([FromBody] PostcardDto postcardDto)
-    {
-        _logger.Log(LogLevel.Information, "Add postcard");
-        postcardDto.UserId = (int)_userContextService.GetUserId;
-        try
-        {
-            PostcardDto newPostcard = await _postcardService.AddNewPostcard(postcardDto);
-            _logger.Log(LogLevel.Information, $"Added postcard with id: {newPostcard.Id}");
-            return Ok(newPostcard);
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to add postcard: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
     [HttpPut("Transfer")]
     public async Task<IActionResult> TransferPostcard([FromBody] TransferPostcardRequest transferPostcardRequest)
     {
         _logger.Log(LogLevel.Information, "Transfer postcard");
         try
         {
-            UserPostcardDto userPostcard = await _postcardService.TransferPostcard(transferPostcardRequest.PostcardId, transferPostcardRequest.NewUserId);
+            UserPostcardDto userPostcard = await _postcardService.TransferPostcard(transferPostcardRequest.NewUserId, transferPostcardRequest.PostcardDto);
             _logger.Log(LogLevel.Information, $"Transferred postcard with id: {userPostcard.PostcardId} to user with id: {userPostcard.UserId}");
             return Ok(userPostcard);
         }
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to transfer postcard: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> UpdatePostcard([FromBody] PostcardDto postcardDto)
-    {
-        _logger.Log(LogLevel.Information, "Update postcard");
-        postcardDto.UserId = (int)_userContextService.GetUserId;
-        try
-        {
-            PostcardDto updatedPostcard = await _postcardService.UpdatePostcard(postcardDto);
-            _logger.Log(LogLevel.Information, $"Updated postcard with id: {updatedPostcard.Id}");
-            return Ok(updatedPostcard);
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to update postcard: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeletePostcard([FromQuery] int postcardId)
-    {
-        _logger.Log(LogLevel.Information, "Delete postcard");
-        try
-        {
-            await _postcardService.DeletePostcard(postcardId);
-            _logger.Log(LogLevel.Information, $"Deleted postcard with id: {postcardId}");
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to delete postcard: {ex.Message}");
             return BadRequest(new { message = ex.Message });
         }
     }

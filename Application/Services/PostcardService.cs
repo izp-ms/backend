@@ -54,18 +54,6 @@ public class PostcardService : IPostcardService
         return mappedPostcardDto;
     }
 
-    public async Task<PostcardDto> DeletePostcard(int postcardId)
-    {
-        Postcard postcard = await _postcardRepository.Get(postcardId);
-        if (postcard == null)
-        {
-            throw new Exception("Postcard not found");
-        }
-
-        await _postcardRepository.Delete(postcard);
-        return _mapper.Map<PostcardDto>(postcard);
-    }
-
     public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(
         PaginationRequest pagination,
         FiltersPostcardRequest filters
@@ -79,7 +67,7 @@ public class PostcardService : IPostcardService
         IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAllPostcardsByUserId(FiltersMapper.Map(filters));
         IEnumerable<Postcard> postcards = await _postcardRepository.GetPaginationByUserId(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
 
-        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, (int)filters.UserId);
+        IEnumerable<PostcardWithDataDto> mappedPostcards = PostcardWithDataDtoMapper.Map(postcards, filters.UserId);
 
         int totalPages = (int)Math.Ceiling(allPostcards.Count() / (double)pagination.PageSize);
 
@@ -101,15 +89,15 @@ public class PostcardService : IPostcardService
         return _mapper.Map<PostcardDto>(postcard);
     }
 
-    public async Task<UserPostcardDto> TransferPostcard(int postcardId, int newUserId)
+    public async Task<UserPostcardDto> TransferPostcard(int newUserId, PostcardDto postcardDto)
     {
-        UserPostcard userPostcard = await _userPostcardRepository.GetUserPostcardByPostcardId(postcardId);
+        UserPostcard userPostcard = await _userPostcardRepository.GetUserPostcardByPostcardId(postcardDto.Id);
         if (!PostcardTransferValidator.IsPostcardValid(userPostcard, newUserId, _userContextService.GetUserId))
         {
             throw new Exception("Postcard is not valid");
         }
 
-        PostcardDto postcard = await GetPostcardById(postcardId);
+        PostcardDto postcard = await GetPostcardById(postcardDto.Id);
         UserStatDto sender = await _userStatsService.GetUserStatsById(_userContextService.GetUserId ?? userPostcard.UserId);
         UserStatDto receiver = await _userStatsService.GetUserStatsById(newUserId);
 
@@ -128,6 +116,8 @@ public class PostcardService : IPostcardService
         receiver.PostcardsReceived++;
         receiver.Score++;
         postcard.IsSent = true;
+        postcard.Title = postcardDto.Title;
+        postcard.Content = postcardDto.Content;
 
         await UpdatePostcard(postcard);
         await _userStatsService.UpdateUserStats(sender);
