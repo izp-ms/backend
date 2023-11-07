@@ -54,18 +54,6 @@ public class PostcardService : IPostcardService
         return mappedPostcardDto;
     }
 
-    public async Task<PostcardDto> DeletePostcard(int postcardId)
-    {
-        Postcard postcard = await _postcardRepository.Get(postcardId);
-        if (postcard == null)
-        {
-            throw new Exception("Postcard not found");
-        }
-
-        await _postcardRepository.Delete(postcard);
-        return _mapper.Map<PostcardDto>(postcard);
-    }
-
     public async Task<PaginationResponse<PostcardWithDataDto>> GetPagination(
         PaginationRequest pagination,
         FiltersPostcardRequest filters

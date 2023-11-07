@@ -104,21 +104,4 @@ public class PostcardDataController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeletePostcardData([FromQuery] int postcardDataId)
-    {
-        _logger.Log(LogLevel.Information, "Delete postcard data");
-        try
-        {
-            await _postcardDataService.DeletePostcardData(postcardDataId);
-            _logger.Log(LogLevel.Information, $"Deleted postcard data with id: {postcardDataId}");
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to delete postcard data: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
-    }
 }

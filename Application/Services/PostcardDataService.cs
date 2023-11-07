@@ -118,25 +118,6 @@ public class PostcardDataService : IPostcardDataService
         return paginationResponse;
     }
 
-    public async Task<PostcardDataDto> DeletePostcardData(int postcardDataId)
-    {
-        PostcardData postcardData = await _postcardDataRepository.Get(postcardDataId);
-        if (postcardData == null)
-        {
-            throw new Exception($"Postcard data with id: {postcardDataId} does not exist");
-        }
-        IEnumerable<Postcard> postcards = await _postcardRepository.GetAll();
-        foreach (Postcard postcard in postcards)
-        {
-            if (postcard.PostcardDataId == postcardDataId)
-            {
-                throw new Exception($"Postcard data with id: {postcardDataId} is used by postcard with id: {postcard.Id}");
-            }
-        }
-        await _postcardDataRepository.Delete(postcardData);
-        return _mapper.Map<PostcardDataDto>(postcardData);
-    }
-
     private static double Measure(double postcardLatitude, double postcardLongitude, double userLatitude, double userLongitude)
     {
         double earthRad = 6378137;
@@ -148,29 +129,4 @@ public class PostcardDataService : IPostcardDataService
         double distance = 2 * earthRad * Math.Atan2(Math.Sqrt(x), Math.Sqrt(1 - x));
         return distance;
     }
-
-    // private async Task<IEnumerable<PostcardData>> GetAllPostcardsDataForPagination(int? userId)
-    // {
-    //     if (userId == null)
-    //     {
-    //         return await _postcardDataRepository.GetAll();
-    //     }
-    //     return await _postcardDataRepository.GetAllPostcardsDataByUserId((int)userId);
-    // }
-
-    // private async Task<IEnumerable<PostcardData>> GetPostcardsDataForPagination(PaginationRequest pagination, int? userId)
-    // {
-    //     if (userId == null)
-    //     {
-    //         return await _postcardDataRepository.GetPagination(
-    //             pagination.PageNumber,
-    //             pagination.PageSize
-    //         );
-    //     }
-    //     return await _postcardDataRepository.GetPaginationByUserId(
-    //         pagination.PageNumber,
-    //         pagination.PageSize,
-    //         (int)userId
-    //     );
-    // }
 }

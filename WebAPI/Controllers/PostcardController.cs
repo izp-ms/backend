@@ -82,24 +82,6 @@ public class PostcardController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public async Task<IActionResult> AddPostcard([FromBody] PostcardDto postcardDto)
-    {
-        _logger.Log(LogLevel.Information, "Add postcard");
-        postcardDto.UserId = (int)_userContextService.GetUserId;
-        try
-        {
-            PostcardDto newPostcard = await _postcardService.AddNewPostcard(postcardDto);
-            _logger.Log(LogLevel.Information, $"Added postcard with id: {newPostcard.Id}");
-            return Ok(newPostcard);
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to add postcard: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
     [HttpPut("Transfer")]
     public async Task<IActionResult> TransferPostcard([FromBody] TransferPostcardRequest transferPostcardRequest)
     {
@@ -131,23 +113,6 @@ public class PostcardController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update postcard: {ex.Message}");
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> DeletePostcard([FromQuery] int postcardId)
-    {
-        _logger.Log(LogLevel.Information, "Delete postcard");
-        try
-        {
-            await _postcardService.DeletePostcard(postcardId);
-            _logger.Log(LogLevel.Information, $"Deleted postcard with id: {postcardId}");
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(LogLevel.Information, $"Failed to delete postcard: {ex.Message}");
             return BadRequest(new { message = ex.Message });
         }
     }
