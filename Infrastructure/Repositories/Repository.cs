@@ -28,13 +28,6 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await _entities.AsNoTracking().ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> GetPagination(int pageNumber, int pageSize)
-    {
-        PaginationValidator.CheckPaginationValid(pageNumber, pageSize);
-
-        return await _entities.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-    }
-
     public async Task<T> Insert(T entity)
     {
         if (entity == null)

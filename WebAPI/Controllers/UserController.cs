@@ -62,9 +62,9 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{userId}")]
     [Authorize]
-    public async Task<IActionResult> GetUser([FromRoute] int userId)
+    public async Task<IActionResult> GetUser(int userId)
     {
         _logger.Log(LogLevel.Information, "Get user information");
         string cacheKey = CacheKeyGenerator.GetKey(userId, _userContextService.GetUserId);

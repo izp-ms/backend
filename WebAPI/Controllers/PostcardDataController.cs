@@ -133,12 +133,23 @@ public class PostcardDataController : ControllerBase
         {
             PostcardDataDto updatedPostcardData = await _postcardDataService.UpdatePostcardData(postcardDataDto);
             _logger.Log(LogLevel.Information, $"Updated postcard data with id: {updatedPostcardData.Id}");
+
+            ClearCache();
+
             return Ok(updatedPostcardData);
         }
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to update postcard data: {ex.Message}");
             return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    private void ClearCache()
+    {
+        if (_cache is MemoryCache cache)
+        {
+            cache.Clear();
         }
     }
 }

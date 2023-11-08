@@ -116,10 +116,6 @@ public class PostcardDataService : IPostcardDataService
         IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAll();
         IEnumerable<PostcardData> allPostcardsData = await _postcardDataRepository.GetAll();
 
-        List<Postcard> postcards = allPostcards
-            .Where(postcard => postcard.Users.Any(user => user.Id == _userContextService.GetUserId))
-            .ToList();
-
         List<PostcardData> filteredPostcardsData = allPostcards
             .Where(postcard => postcard.Users.Any(user => user.Id != _userContextService.GetUserId))
             .Select(postcard => postcard.PostcardData)
@@ -132,7 +128,7 @@ public class PostcardDataService : IPostcardDataService
         List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
         List<PostcardDataDto> PostcardsNearby = new List<PostcardDataDto>();
 
-        allPostcardsData.ToList().ForEach(postcard =>
+        filteredPostcardsData.ToList().ForEach(postcard =>
         {
             double distance = Measure(postcard.Latitude.ToDouble(), postcard.Longitude.ToDouble(), userLatitude, userLongitude);
 
