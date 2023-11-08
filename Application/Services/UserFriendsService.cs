@@ -10,11 +10,17 @@ namespace Application.Services;
 public class UserFriendsService : IUserFriendsService
 {
     private readonly IUserFriendsRepository _userFriendsRepository;
+    private readonly IUserService _userService;
     private readonly IMapper _mapper;
 
-    public UserFriendsService(IUserFriendsRepository userFriendsRepository, IMapper mapper)
+    public UserFriendsService(
+        IUserFriendsRepository userFriendsRepository,
+        IUserService userService,
+        IMapper mapper
+    )
     {
         _userFriendsRepository = userFriendsRepository;
+        _userService = userService;
         _mapper = mapper;
     }
 
@@ -26,6 +32,11 @@ public class UserFriendsService : IUserFriendsService
 
     public async Task<FriendDto> AddNewFriend(UserFriendRequest addUserFriendRequest)
     {
+        if (!await _userService.IsUserActive(addUserFriendRequest.FriendId))
+        {
+            throw new Exception("User is not active");
+        }
+
         UserFriends userFriends = await _userFriendsRepository.Insert(new UserFriends
         {
             UserId = addUserFriendRequest.UserId,

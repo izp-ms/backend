@@ -13,4 +13,5 @@ public interface IUserService
     Task<UserDto> GetUser(int userId);
     Task<PaginationResponse<UserDto>> GetPagination(PaginationRequest pagination, FiltersUserRequest filters);
     Task<UserUpdateDto> UpdateUser(UserUpdateDto userUpdateDto);
+    Task<bool> IsUserActive(int userId);
 }

@@ -16,6 +16,7 @@ public class PostcardService : IPostcardService
     private readonly IUserPostcardRepository _userPostcardRepository;
     private readonly IUserContextService _userContextService;
     private readonly IUserStatsService _userStatsService;
+    private readonly IUserService _userService;
     private readonly IMapper _mapper;
 
     public PostcardService(
@@ -23,12 +24,14 @@ public class PostcardService : IPostcardService
         IPostcardRepository postcardRepository,
         IUserContextService userContextService,
         IUserStatsService userStatsService,
+        IUserService userService,
         IMapper mapper)
     {
         _userPostcardRepository = userPostcardRepository;
         _postcardRepository = postcardRepository;
         _userContextService = userContextService;
         _userStatsService = userStatsService;
+        _userService = userService;
         _mapper = mapper;
     }
 
@@ -91,6 +94,11 @@ public class PostcardService : IPostcardService
 
     public async Task<UserPostcardDto> TransferPostcard(int newUserId, PostcardDto postcardDto)
     {
+        if (!await _userService.IsUserActive(newUserId))
+        {
+            throw new Exception("User is not active");
+        }
+
         UserPostcard userPostcard = await _userPostcardRepository.GetUserPostcardByPostcardId(postcardDto.Id);
         if (!PostcardTransferValidator.IsPostcardValid(userPostcard, newUserId, _userContextService.GetUserId))
         {
