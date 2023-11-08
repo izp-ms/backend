@@ -30,6 +30,12 @@ public class UserFriendsService : IUserFriendsService
         return _mapper.Map<IEnumerable<FriendDto>>(userFriends);
     }
 
+    public async Task<IEnumerable<FriendDto>> GetFollowers(int userId)
+    {
+        IEnumerable<UserFriends> userFriends = await _userFriendsRepository.GetFollowers(userId);
+        return _mapper.Map<IEnumerable<FriendDto>>(userFriends);
+    }
+
     public async Task<FriendDto> AddNewFriend(UserFriendRequest addUserFriendRequest)
     {
         if (!await _userService.IsUserActive(addUserFriendRequest.FriendId))

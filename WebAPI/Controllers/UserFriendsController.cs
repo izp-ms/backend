@@ -22,7 +22,7 @@ public class UserFriendsController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("Following/{id}")]
     public async Task<IActionResult> GetFollowingByUserId(int id)
     {
         _logger.Log(LogLevel.Information, "Get following");
@@ -34,6 +34,22 @@ public class UserFriendsController : ControllerBase
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get following: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("Followers/{id}")]
+    public async Task<IActionResult> GetFollowersByUserId(int id)
+    {
+        _logger.Log(LogLevel.Information, "Get followers");
+        try
+        {
+            IEnumerable<FriendDto> followers = await _userFriendsService.GetFollowers(id);
+            return Ok(followers);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to get followers: {ex.Message}");
             return BadRequest(new { message = ex.Message });
         }
     }
