@@ -1,3 +1,4 @@
+using System.Transactions;
 using Application.Dto;
 using Application.Helpers;
 using Application.Interfaces;
@@ -49,45 +50,53 @@ public class PostcardDataService : IPostcardDataService
 
     public async Task<PostcardDto> CollectPostcardData(int userId, int postcardDataId, CoordinateRequest coordinateRequest)
     {
-        if (postcardDataId == 0)
+        using TransactionScope transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        try
         {
-            throw new ArgumentNullException(nameof(postcardDataId));
+            if (postcardDataId == 0)
+            {
+                throw new ArgumentNullException(nameof(postcardDataId));
+            }
+
+            if (!await ValidateUserCoordinationPostcardLocations(coordinateRequest, postcardDataId))
+            {
+                throw new Exception("User is not in range of this postcard or postcard does not exist");
+            }
+
+            if (await CheckIfUserAlreadyCollectedPostcard(userId, postcardDataId))
+            {
+                throw new Exception("User already collected this postcard");
+            }
+
+            await _postcardCollectionRepository.Insert(new PostcardCollection()
+            {
+                UserId = userId,
+                PostcardDataId = postcardDataId,
+            });
+
+            Postcard postcard = await _postcardRepository.Insert(new Postcard()
+            {
+                Title = "",
+                Content = "",
+                PostcardDataId = postcardDataId,
+                Type = "PLACE",
+                CreatedAt = DateTime.UtcNow,
+                IsSent = false,
+            });
+
+            await _userPostcardRepository.Insert(new UserPostcard()
+            {
+                UserId = userId,
+                PostcardId = postcard.Id,
+                ReceivedAt = DateTime.UtcNow,
+            });
+
+            return _mapper.Map<PostcardDto>(postcard);
         }
-
-        if (!await ValidateUserCoordinationPostcardLocations(coordinateRequest, postcardDataId))
+        catch
         {
-            throw new Exception("User is not in range of this postcard or postcard does not exist");
+            throw;
         }
-
-        if (await CheckIfUserAlreadyCollectedPostcard(userId, postcardDataId))
-        {
-            throw new Exception("User already collected this postcard");
-        }
-
-        await _postcardCollectionRepository.Insert(new PostcardCollection()
-        {
-            UserId = userId,
-            PostcardDataId = postcardDataId,
-        });
-
-        Postcard postcard = await _postcardRepository.Insert(new Postcard()
-        {
-            Title = "",
-            Content = "",
-            PostcardDataId = postcardDataId,
-            Type = "PLACE",
-            CreatedAt = DateTime.UtcNow,
-            IsSent = false,
-        });
-
-        await _userPostcardRepository.Insert(new UserPostcard()
-        {
-            UserId = userId,
-            PostcardId = postcard.Id,
-            ReceivedAt = DateTime.UtcNow,
-        });
-
-        return _mapper.Map<PostcardDto>(postcard);
     }
 
     public async Task<PostcardDataDto> UpdatePostcardData(PostcardDataDto postcardData)

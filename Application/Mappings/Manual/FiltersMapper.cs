@@ -35,4 +35,17 @@ public static class FiltersMapper
             OrderBy = request.OrderBy
         };
     }
+
+    public static FiltersUser Map(FiltersUserRequest request)
+    {
+        return new FiltersUser
+        {
+            Search = request.Search,
+            Email = request.Email,
+            NickName = request.NickName,
+            CreatedFrom = request.CreatedFrom,
+            CreatedTo = request.CreatedTo,
+            OrderBy = request.OrderBy
+        };
+    }
 }

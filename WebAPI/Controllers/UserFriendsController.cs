@@ -49,6 +49,7 @@ public class UserFriendsController : ControllerBase
                 _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to add new friend");
                 return BadRequest(new { message = "Unauthorized" });
             }
+            addUserFriendRequest.UserId = (int)_userContextService.GetUserId;
             FriendDto friendDto = await _userFriendsService.AddNewFriend(addUserFriendRequest);
             _logger.Log(LogLevel.Information, $"Successfully added new friend with id: {friendDto.Id}");
             return Ok(friendDto);

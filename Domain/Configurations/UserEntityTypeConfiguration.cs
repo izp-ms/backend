@@ -41,5 +41,6 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(p => p.NickName).IsRequired().HasMaxLength(32);
         builder.Property(p => p.Role).IsRequired().HasMaxLength(16);
         builder.Property(p => p.CreatedAt).IsRequired();
+        builder.Property(p => p.IsActive).IsRequired().HasDefaultValue(true);
     }
 }
