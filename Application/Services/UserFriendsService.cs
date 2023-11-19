@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
+using Application.Mappings.Manual;
 using Application.Requests;
 using AutoMapper;
 using Domain.Entities;
@@ -27,13 +28,13 @@ public class UserFriendsService : IUserFriendsService
     public async Task<IEnumerable<FriendDto>> GetFollowing(int userId)
     {
         IEnumerable<UserFriends> userFriends = await _userFriendsRepository.GetFollowing(userId);
-        return _mapper.Map<IEnumerable<FriendDto>>(userFriends);
+        return FriendsMapper.Map(userFriends);
     }
 
     public async Task<IEnumerable<FriendDto>> GetFollowers(int userId)
     {
         IEnumerable<UserFriends> userFriends = await _userFriendsRepository.GetFollowers(userId);
-        return _mapper.Map<IEnumerable<FriendDto>>(userFriends);
+        return FriendsMapper.Map(userFriends);
     }
 
     public async Task<FriendDto> AddNewFriend(UserFriendRequest addUserFriendRequest)

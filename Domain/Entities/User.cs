@@ -9,9 +9,9 @@ public class User : BaseEntity
     public DateTime CreatedAt { get; set; }
     public bool IsActive { get; set; }
 
-    public virtual UserDetail UsersDetails { get; set; }
-    public virtual UserStat UsersStats { get; set; }
-    public virtual Address Address { get; set; }
+    public virtual UserDetail UsersDetails { get; set; } = new UserDetail();
+    public virtual UserStat UsersStats { get; set; } = new UserStat();
+    public virtual Address Address { get; set; } = new Address();
     public virtual IEnumerable<Postcard> Postcards { get; set; } = new List<Postcard>();
     public virtual IEnumerable<UserFriends> Friends { get; set; } = new List<UserFriends>();
 }

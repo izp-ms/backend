@@ -27,7 +27,7 @@ public class FavouritePostcardService : IFavouritePostcardService
     public async Task<IEnumerable<FavouritePostcardDto>> GetFavouritePostcards(int userId)
     {
         IEnumerable<FavouritePostcard> favouritePostcards = await _favouritePostcardRepository.GetFavouritePostcardByUserId(userId);
-        IEnumerable<FavouritePostcardDto> favouritePostcardDtos = _mapper.Map<IEnumerable<FavouritePostcardDto>>(favouritePostcards);
+        IEnumerable<FavouritePostcardDto> favouritePostcardDtos = FavouritePostcardMapper.Map(favouritePostcards);
         return favouritePostcardDtos;
     }
 

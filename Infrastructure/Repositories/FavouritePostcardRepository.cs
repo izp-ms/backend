@@ -16,6 +16,10 @@ public class FavouritePostcardRepository : Repository<FavouritePostcard>, IFavou
 
     public async Task<IEnumerable<FavouritePostcard>> GetFavouritePostcardByUserId(int userId)
     {
-        return await _dataContext.FavouritePostcards.Where(x => x.UserId == userId).ToListAsync();
+        return await _dataContext.FavouritePostcards
+            .Include(fp => fp.Postcard)
+            .Include(fp => fp.Postcard.PostcardData)
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
     }
 }

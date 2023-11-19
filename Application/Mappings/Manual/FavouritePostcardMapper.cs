@@ -1,3 +1,4 @@
+using Application.Dto;
 using Application.Requests;
 using Domain.Entities;
 
@@ -14,6 +15,33 @@ public static class FavouritePostcardMapper
                 PostcardId = data.PostcardId,
                 Order = data.OrderId,
                 UserId = updateFavouritePostcardRequest.UserId
+            };
+        });
+    }
+
+    public static IEnumerable<FavouritePostcardDto> Map(IEnumerable<FavouritePostcard> favouritePostcards)
+    {
+        return favouritePostcards.Select(favouritePostcard =>
+        {
+            return new FavouritePostcardDto()
+            {
+                Id = favouritePostcard.Id,
+                UserId = favouritePostcard.UserId,
+                PostcardId = favouritePostcard.PostcardId,
+                Order = favouritePostcard.Order,
+                Title = favouritePostcard.Postcard.Title,
+                Content = favouritePostcard.Postcard.Content,
+                Type = favouritePostcard.Postcard.Type,
+                CreatedAt = favouritePostcard.Postcard.CreatedAt,
+                IsSent = favouritePostcard.Postcard.IsSent,
+                ImageBase64 = favouritePostcard.Postcard.PostcardData.ImageBase64,
+                Country = favouritePostcard.Postcard.PostcardData.Country,
+                City = favouritePostcard.Postcard.PostcardData.City,
+                PostcardDataTitle = favouritePostcard.Postcard.PostcardData.Title,
+                Longitude = favouritePostcard.Postcard.PostcardData.Longitude,
+                Latitude = favouritePostcard.Postcard.PostcardData.Latitude,
+                CollectRangeInMeters = favouritePostcard.Postcard.PostcardData.CollectRangeInMeters,
+                PostcardDataCreatedAt = favouritePostcard.Postcard.PostcardData.CreatedAt
             };
         });
     }
