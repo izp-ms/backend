@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using Application.Helpers;
 using Application.Interfaces;
+using Application.Requests;
 using Application.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +33,38 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetUser([FromQuery] int userId)
+    public async Task<IActionResult> GetPaginatedUsers(
+        [FromQuery] PaginationRequest pagination,
+        [FromQuery] FiltersUserRequest filters
+    )
+    {
+        _logger.Log(LogLevel.Information, "Get users");
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
+
+        try
+        {
+            if (!_cache.TryGetValue(cacheKey, out PaginationResponse<UserDto> users))
+            {
+                users = await _userService.GetPagination(pagination, filters);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, users, cacheEntryOptions);
+            }
+
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to get users: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("{userId}")]
+    [Authorize]
+    public async Task<IActionResult> GetUser(int userId)
     {
         _logger.Log(LogLevel.Information, "Get user information");
         string cacheKey = CacheKeyGenerator.GetKey(userId, _userContextService.GetUserId);
@@ -120,25 +152,24 @@ public class UserController : ControllerBase
 
     [HttpDelete]
     [Authorize]
-    public async Task<IActionResult> DeleteUser([FromQuery] int userId)
+    public async Task<IActionResult> DeactivateUser([FromQuery] int userId)
     {
-        _logger.Log(LogLevel.Information, "Delete user");
+        _logger.Log(LogLevel.Information, "Deactivate user");
         try
         {
             if (_userContextService.GetUserId != userId)
             {
-                _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to delete user with id: {userId}");
+                _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to deactivate user with id: {userId}");
                 return BadRequest(new { message = "Unauthorized" });
             }
-            User deletedUser = await _userService.DeleteUser(userId);
-            _logger.Log(LogLevel.Information, $"Deleted user with id: {deletedUser.Id}");
-            return Ok(new { message = $"Deleted user with id: {deletedUser.Id}" });
+            User deletedUser = await _userService.DeactivateUser(userId);
+            _logger.Log(LogLevel.Information, $"Deactivated user with id: {deletedUser.Id}");
+            return Ok(new { message = $"Deactivated user with id: {deletedUser.Id}" });
         }
         catch (Exception ex)
         {
-            _logger.Log(LogLevel.Information, $"Failed to delete user: {ex.Message}");
+            _logger.Log(LogLevel.Information, $"Failed to Deactivate user: {ex.Message}");
             return BadRequest(new { message = ex.Message });
         }
     }
-
 }

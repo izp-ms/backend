@@ -7,6 +7,7 @@ using Application.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using System.Transactions;
 
 namespace Application.Services;
 
@@ -49,45 +50,53 @@ public class PostcardDataService : IPostcardDataService
 
     public async Task<PostcardDto> CollectPostcardData(int userId, int postcardDataId, CoordinateRequest coordinateRequest)
     {
-        if (postcardDataId == 0)
+        using TransactionScope transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        try
         {
-            throw new ArgumentNullException(nameof(postcardDataId));
+            if (postcardDataId == 0)
+            {
+                throw new ArgumentNullException(nameof(postcardDataId));
+            }
+
+            if (!await ValidateUserCoordinationPostcardLocations(coordinateRequest, postcardDataId))
+            {
+                throw new Exception("User is not in range of this postcard or postcard does not exist");
+            }
+
+            if (await CheckIfUserAlreadyCollectedPostcard(userId, postcardDataId))
+            {
+                throw new Exception("User already collected this postcard");
+            }
+
+            await _postcardCollectionRepository.Insert(new PostcardCollection()
+            {
+                UserId = userId,
+                PostcardDataId = postcardDataId,
+            });
+
+            Postcard postcard = await _postcardRepository.Insert(new Postcard()
+            {
+                Title = "",
+                Content = "",
+                PostcardDataId = postcardDataId,
+                Type = "PLACE",
+                CreatedAt = DateTime.UtcNow,
+                IsSent = false,
+            });
+
+            await _userPostcardRepository.Insert(new UserPostcard()
+            {
+                UserId = userId,
+                PostcardId = postcard.Id,
+                ReceivedAt = DateTime.UtcNow,
+            });
+
+            return _mapper.Map<PostcardDto>(postcard);
         }
-
-        if (!await ValidateUserCoordinationPostcardLocations(coordinateRequest, postcardDataId))
+        catch
         {
-            throw new Exception("User is not in range of this postcard or postcard does not exist");
+            throw;
         }
-
-        if (await CheckIfUserAlreadyCollectedPostcard(userId, postcardDataId))
-        {
-            throw new Exception("User already collected this postcard");
-        }
-
-        await _postcardCollectionRepository.Insert(new PostcardCollection()
-        {
-            UserId = userId,
-            PostcardDataId = postcardDataId,
-        });
-
-        Postcard postcard = await _postcardRepository.Insert(new Postcard()
-        {
-            Title = "",
-            Content = "",
-            PostcardDataId = postcardDataId,
-            Type = "PLACE",
-            CreatedAt = DateTime.UtcNow,
-            IsSent = false,
-        });
-
-        await _userPostcardRepository.Insert(new UserPostcard()
-        {
-            UserId = userId,
-            PostcardId = postcard.Id,
-            ReceivedAt = DateTime.UtcNow,
-        });
-
-        return _mapper.Map<PostcardDto>(postcard);
     }
 
     public async Task<PostcardDataDto> UpdatePostcardData(PostcardDataDto postcardData)
@@ -107,10 +116,6 @@ public class PostcardDataService : IPostcardDataService
         IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAll();
         IEnumerable<PostcardData> allPostcardsData = await _postcardDataRepository.GetAll();
 
-        List<Postcard> postcards = allPostcards
-            .Where(postcard => postcard.Users.Any(user => user.Id == _userContextService.GetUserId))
-            .ToList();
-
         List<PostcardData> filteredPostcardsData = allPostcards
             .Where(postcard => postcard.Users.Any(user => user.Id != _userContextService.GetUserId))
             .Select(postcard => postcard.PostcardData)
@@ -123,7 +128,7 @@ public class PostcardDataService : IPostcardDataService
         List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
         List<PostcardDataDto> PostcardsNearby = new List<PostcardDataDto>();
 
-        allPostcardsData.ToList().ForEach(postcard =>
+        filteredPostcardsData.ToList().ForEach(postcard =>
         {
             double distance = Measure(postcard.Latitude.ToDouble(), postcard.Longitude.ToDouble(), userLatitude, userLongitude);
 

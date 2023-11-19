@@ -10,6 +10,11 @@ public static class CacheKeyGenerator
         return $"{userId}_{pagination.PageNumber}_{pagination.PageSize}_{filters.Search}_{filters.City}_{filters.Country}_{filters.Longitude}_{filters.Latitude}_{filters.CollectRangeInMeters}_{filters.DateFrom}_{filters.DateTo}_{filters.UserId}_{filters.OrderBy}";
     }
 
+    public static string GetKey(int? userId, PaginationRequest pagination, FiltersUserRequest filters)
+    {
+        return $"{userId}_{pagination.PageNumber}_{pagination.PageSize}_{filters.Search}_{filters.Email}_{filters.NickName}_{filters.CreatedFrom}_{filters.CreatedTo}_{filters.OrderBy}";
+    }
+
     public static string GetKey(int? userId, CoordinateRequest coordinateRequest)
     {
         return $"{userId}_{coordinateRequest.Latitude}_{coordinateRequest.Longitude}_{coordinateRequest.PostcardNotificationRangeInMeters}";

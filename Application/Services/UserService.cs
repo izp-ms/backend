@@ -2,13 +2,14 @@
 using Application.Dto;
 using Application.Helpers;
 using Application.Interfaces;
+using Application.Mappings.Manual;
+using Application.Requests;
 using Application.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System.Transactions;
 
 namespace Application.Services;
 
@@ -20,6 +21,7 @@ public class UserService : IUserService
     private readonly IUserDetailRepository _userDetailRepository;
     private readonly IAddressRepository _addressRepository;
     private readonly IUserFriendsRepository _userFriendsRepository;
+    private readonly IPostcardDataRepository _postcardDataRepository;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
@@ -30,6 +32,7 @@ public class UserService : IUserService
         IUserDetailRepository userDetailRepository,
         IAddressRepository addressRepository,
         IUserFriendsRepository userFriendsRepository,
+        IPostcardDataRepository postcardDataRepository,
         IMapper mapper,
         IPasswordHasher<User> passwordHasher
         )
@@ -40,12 +43,18 @@ public class UserService : IUserService
         _userDetailRepository = userDetailRepository;
         _addressRepository = addressRepository;
         _userFriendsRepository = userFriendsRepository;
+        _postcardDataRepository = postcardDataRepository;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
     }
 
     public async Task<UserDto> GetUser(int userId)
     {
+        if (!await IsUserActive(userId))
+        {
+            throw new Exception("User is not active");
+        }
+
         User user = await _userRepository.Get(userId) ?? throw new Exception("User not found");
         Address address = await _addressRepository.Get(userId) ?? throw new Exception("Address not found");
         UserDetail userDetail = await _userDetailRepository.Get(userId) ?? throw new Exception("User detail not found");
@@ -56,7 +65,7 @@ public class UserService : IUserService
         _mapper.Map(userDetail, userDto);
         _mapper.Map(userStat, userDto);
 
-        int postcardsCount = user.Postcards.Count();
+        int postcardsCount = await _postcardDataRepository.TotalCountByUserId(userId);
         IEnumerable<UserFriends> followersUsers = await _userFriendsRepository.GetFollowers(userId);
         int followersCount = followersUsers.Count();
         IEnumerable<UserFriends> followingUsers = await _userFriendsRepository.GetFollowing(userId);
@@ -67,6 +76,27 @@ public class UserService : IUserService
         userDto.FollowingCount = followingCount;
 
         return userDto;
+    }
+
+    public async Task<PaginationResponse<UserDto>> GetPagination(PaginationRequest pagination, FiltersUserRequest filters)
+    {
+        IEnumerable<User> allUsers = await _userRepository.GetAllUsers(FiltersMapper.Map(filters));
+        IEnumerable<User> users = await _userRepository.GetPaginationUsers(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
+
+        IEnumerable<UserDto> mappedUsers = _mapper.Map<IEnumerable<UserDto>>(users);
+
+        int totalPages = (int)Math.Ceiling(allUsers.Count() / (double)pagination.PageSize);
+
+        PaginationResponse<UserDto> paginationResponse = new PaginationResponse<UserDto>()
+        {
+            PageNumber = pagination.PageNumber,
+            PageSize = pagination.PageSize,
+            TotalCount = allUsers.Count(),
+            TotalPages = totalPages,
+            Content = mappedUsers
+        };
+
+        return paginationResponse;
     }
 
     public Task<LoginResponse> Login(LoginUserDto loginUserDto)
@@ -128,35 +158,31 @@ public class UserService : IUserService
         return registerResponse;
     }
 
-    public async Task<User> DeleteUser(int userId)
+    public async Task<User> DeactivateUser(int userId)
     {
-        using TransactionScope transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        try
+        User user = await _userRepository.Get(userId) ?? throw new Exception("User not found");
+        user.IsActive = false;
+        await _userRepository.Update(user);
+        return user;
+    }
+
+    public async Task<bool> IsUserActive(int userId)
+    {
+        User user = await _userRepository.Get(userId);
+        if (user == null)
         {
-            User userToDelete = await _userRepository.Get(userId) ?? throw new Exception(userId.ToString());
-            UserStat userStatToDelete = await _userStatsRepository.Get(userId) ?? throw new Exception(userId.ToString());
-            await _userStatsRepository.Delete(userStatToDelete);
-
-            UserDetail userDetailToDelete = await _userDetailRepository.Get(userId) ?? throw new Exception(userId.ToString());
-            await _userDetailRepository.Delete(userDetailToDelete);
-
-            Address addressToDelete = await _addressRepository.Get(userId) ?? throw new Exception(userId.ToString());
-            await _addressRepository.Delete(addressToDelete);
-
-            await _userRepository.Delete(userToDelete);
-
-            transactionScope.Complete();
-
-            return userToDelete;
+            return false;
         }
-        catch
-        {
-            throw;
-        }
+        return user.IsActive;
     }
 
     public async Task<UserUpdateDto> UpdateUser(UserUpdateDto userUpdateDto)
     {
+        if (!await IsUserActive(userUpdateDto.Id))
+        {
+            throw new Exception("User is not active");
+        }
+
         User user = await _userRepository.Get(userUpdateDto.Id) ?? throw new Exception("User not found");
         UserDetail userDetail = await _userDetailRepository.Get(userUpdateDto.Id) ?? throw new Exception("User detail not found");
         Address address = await _addressRepository.Get(userUpdateDto.Id) ?? throw new Exception("Address not found");

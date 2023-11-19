@@ -16,6 +16,14 @@ public class PostcardDataRepository : Repository<PostcardData>, IPostcardDataRep
         _dataContext = dataContext;
     }
 
+    public async Task<int> TotalCountByUserId(int userId)
+    {
+        return await _dataContext.PostcardData
+            .Include(x => x.Postcards)
+            .Where(x => x.Postcards.Any(x => x.Users.Any(x => x.Id == userId)))
+            .CountAsync();
+    }
+
     public async Task<IEnumerable<PostcardData>> GetAllPostcardsData(FiltersPostcardData filters)
     {
         IQueryable<PostcardData> query = _dataContext.PostcardData
