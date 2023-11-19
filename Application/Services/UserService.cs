@@ -21,6 +21,7 @@ public class UserService : IUserService
     private readonly IUserDetailRepository _userDetailRepository;
     private readonly IAddressRepository _addressRepository;
     private readonly IUserFriendsRepository _userFriendsRepository;
+    private readonly IPostcardDataRepository _postcardDataRepository;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
@@ -31,6 +32,7 @@ public class UserService : IUserService
         IUserDetailRepository userDetailRepository,
         IAddressRepository addressRepository,
         IUserFriendsRepository userFriendsRepository,
+        IPostcardDataRepository postcardDataRepository,
         IMapper mapper,
         IPasswordHasher<User> passwordHasher
         )
@@ -41,6 +43,7 @@ public class UserService : IUserService
         _userDetailRepository = userDetailRepository;
         _addressRepository = addressRepository;
         _userFriendsRepository = userFriendsRepository;
+        _postcardDataRepository = postcardDataRepository;
         _mapper = mapper;
         _passwordHasher = passwordHasher;
     }
@@ -62,7 +65,7 @@ public class UserService : IUserService
         _mapper.Map(userDetail, userDto);
         _mapper.Map(userStat, userDto);
 
-        int postcardsCount = user.Postcards.Count();
+        int postcardsCount = await _postcardDataRepository.TotalCountByUserId(userId);
         IEnumerable<UserFriends> followersUsers = await _userFriendsRepository.GetFollowers(userId);
         int followersCount = followersUsers.Count();
         IEnumerable<UserFriends> followingUsers = await _userFriendsRepository.GetFollowing(userId);
@@ -175,7 +178,7 @@ public class UserService : IUserService
 
     public async Task<UserUpdateDto> UpdateUser(UserUpdateDto userUpdateDto)
     {
-        if (!await IsUserActive(userUpdateDto.Id) == false)
+        if (!await IsUserActive(userUpdateDto.Id))
         {
             throw new Exception("User is not active");
         }
