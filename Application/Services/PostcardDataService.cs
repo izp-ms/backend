@@ -7,6 +7,7 @@ using Application.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Models;
 using System.Transactions;
 
 namespace Application.Services;
@@ -91,7 +92,8 @@ public class PostcardDataService : IPostcardDataService
                 ReceivedAt = DateTime.UtcNow,
             });
 
-            return _mapper.Map<PostcardDto>(postcard);
+            transactionScope.Complete();
+            return PostcardMapper.Map(postcard, userId);
         }
         catch
         {
@@ -113,14 +115,20 @@ public class PostcardDataService : IPostcardDataService
 
     public async Task<CurrentLocationPostcardsResponse> GetPostcardsNearby(CoordinateRequest coordinateRequest)
     {
-        IEnumerable<Postcard> allPostcards = await _postcardRepository.GetAll();
+        if (_userContextService.GetUserId == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        FiltersPostcardData filters = new FiltersPostcardData()
+        {
+            UserId = (int)_userContextService.GetUserId,
+        };
+
+        IEnumerable<PostcardData> allUserPostcardsData = await _postcardDataRepository.GetAllPostcardsData(filters);
         IEnumerable<PostcardData> allPostcardsData = await _postcardDataRepository.GetAll();
 
-        List<PostcardData> filteredPostcardsData = allPostcards
-            .Where(postcard => postcard.Users.Any(user => user.Id != _userContextService.GetUserId))
-            .Select(postcard => postcard.PostcardData)
-            .Distinct()
-            .ToList();
+        List<PostcardData> filteredPostcardData = allPostcardsData.Except(allUserPostcardsData).ToList();
 
         double userLatitude = coordinateRequest.Latitude.ToDouble();
         double userLongitude = coordinateRequest.Longitude.ToDouble();
@@ -128,7 +136,7 @@ public class PostcardDataService : IPostcardDataService
         List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
         List<PostcardDataDto> PostcardsNearby = new List<PostcardDataDto>();
 
-        filteredPostcardsData.ToList().ForEach(postcard =>
+        filteredPostcardData.ForEach(postcard =>
         {
             double distance = Measure(postcard.Latitude.ToDouble(), postcard.Longitude.ToDouble(), userLatitude, userLongitude);
 
@@ -197,11 +205,26 @@ public class PostcardDataService : IPostcardDataService
 
     private async Task<bool> ValidateUserCoordinationPostcardLocations(CoordinateRequest coordinateRequest, int postcardDataId)
     {
+        if (_userContextService.GetUserId == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        FiltersPostcardData filters = new FiltersPostcardData()
+        {
+            UserId = (int)_userContextService.GetUserId,
+        };
+
+        IEnumerable<PostcardData> allUserPostcardsData = await _postcardDataRepository.GetAllPostcardsData(filters);
         IEnumerable<PostcardData> allPostcardsData = await _postcardDataRepository.GetAll();
-        List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
+        List<PostcardData> filteredPostcardData = allPostcardsData.Except(allUserPostcardsData).ToList();
+
         double userLatitude = coordinateRequest.Latitude.ToDouble();
         double userLongitude = coordinateRequest.Longitude.ToDouble();
-        allPostcardsData.ToList().ForEach(postcard =>
+
+        List<PostcardDataDto> PostcardsToCollect = new List<PostcardDataDto>();
+
+        filteredPostcardData.ForEach(postcard =>
         {
             double distance = Measure(postcard.Latitude.ToDouble(), postcard.Longitude.ToDouble(), userLatitude, userLongitude);
 

@@ -26,8 +26,10 @@ public class UserFriendsRepository : Repository<UserFriends>, IUserFriendsReposi
 
     public async Task<IEnumerable<UserFriends>> GetFollowers(int userId)
     {
-        IQueryable<int> friendsIds = _dataContext.UserFriends
-            .Select(uf => uf.UserId);
+        List<int> friendsIds = await _dataContext.UserFriends
+            .Where(uf => uf.UserId == userId)
+            .Select(uf => uf.UserId)
+            .ToListAsync();
 
         return await _dataContext.UserFriends
             .Include(uf => uf.User)
