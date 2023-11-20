@@ -106,15 +106,15 @@ public class PostcardDataController : ControllerBase
         string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, coordinateRequest);
         try
         {
-            if (!_cache.TryGetValue(cacheKey, out CurrentLocationPostcardsResponse postcardData))
-            {
-                postcardData = await _postcardDataService.GetPostcardsNearby(coordinateRequest);
-                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
-                    .SetPriority(CacheItemPriority.Normal);
-                _cache.Set(cacheKey, postcardData, cacheEntryOptions);
-            }
+            // if (!_cache.TryGetValue(cacheKey, out CurrentLocationPostcardsResponse postcardData))
+            // {
+            CurrentLocationPostcardsResponse postcardData = await _postcardDataService.GetPostcardsNearby(coordinateRequest);
+            //     MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+            //         .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            //         .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+            //         .SetPriority(CacheItemPriority.Normal);
+            //     _cache.Set(cacheKey, postcardData, cacheEntryOptions);
+            // }
 
             return Ok(postcardData);
         }

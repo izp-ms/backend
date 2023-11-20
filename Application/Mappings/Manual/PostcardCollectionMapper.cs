@@ -1,5 +1,4 @@
 using Application.Dto;
-using Application.Requests;
 using Domain.Entities;
 
 namespace Application.Mappings.Manual;
