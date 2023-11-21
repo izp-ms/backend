@@ -10,7 +10,6 @@ public static class FiltersMapper
         return new FiltersPostcard
         {
             Search = request.Search,
-            Type = request.Type,
             IsSent = request.IsSent,
             UserId = request.UserId,
             DateFrom = request.DateFrom,
@@ -29,6 +28,7 @@ public static class FiltersMapper
             Longitude = request.Longitude,
             Latitude = request.Latitude,
             CollectRangeInMeters = request.CollectRangeInMeters,
+            Type = request.Type,
             DateFrom = request.DateFrom,
             DateTo = request.DateTo,
             UserId = request.UserId,

@@ -3,6 +3,7 @@ using Application.Helpers;
 using Application.Interfaces;
 using Application.Requests;
 using Application.Response;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,17 +18,20 @@ public class PostcardDataController : ControllerBase
     private readonly IPostcardDataService _postcardDataService;
     private readonly IUserContextService _userContextService;
     private readonly IMemoryCache _cache;
+    private readonly CacheSettings _cacheSettings;
     private readonly ILogger<PostcardDataController> _logger;
 
     public PostcardDataController(
         IPostcardDataService postcardDataService,
         IUserContextService userContextService,
         IMemoryCache cache,
+        CacheSettings cacheSettings,
         ILogger<PostcardDataController> logger)
     {
         _postcardDataService = postcardDataService;
         _userContextService = userContextService;
         _cache = cache;
+        _cacheSettings = cacheSettings;
         _logger = logger;
     }
 
@@ -46,8 +50,8 @@ public class PostcardDataController : ControllerBase
             {
                 postcardData = await _postcardDataService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
                     .SetPriority(CacheItemPriority.Normal);
                 _cache.Set(cacheKey, postcardData, cacheEntryOptions);
             }
@@ -106,15 +110,15 @@ public class PostcardDataController : ControllerBase
         string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, coordinateRequest);
         try
         {
-            // if (!_cache.TryGetValue(cacheKey, out CurrentLocationPostcardsResponse postcardData))
-            // {
-            CurrentLocationPostcardsResponse postcardData = await _postcardDataService.GetPostcardsNearby(coordinateRequest);
-            //     MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-            //         .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-            //         .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
-            //         .SetPriority(CacheItemPriority.Normal);
-            //     _cache.Set(cacheKey, postcardData, cacheEntryOptions);
-            // }
+            if (!_cache.TryGetValue(cacheKey, out CurrentLocationPostcardsResponse postcardData))
+            {
+                postcardData = await _postcardDataService.GetPostcardsNearby(coordinateRequest);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, postcardData, cacheEntryOptions);
+            }
 
             return Ok(postcardData);
         }

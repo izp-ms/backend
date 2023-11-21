@@ -15,7 +15,6 @@ public static class PostcardWithDataDtoMapper
                 Title = postcard.Title,
                 Content = postcard.Content,
                 PostcardDataId = postcard.PostcardDataId,
-                Type = postcard.Type,
                 CreatedAt = postcard.CreatedAt,
                 UserId = userId,
                 IsSent = postcard.IsSent,
@@ -25,7 +24,8 @@ public static class PostcardWithDataDtoMapper
                 PostcardDataTitle = postcard.PostcardData.Title,
                 Longitude = postcard.PostcardData.Longitude,
                 Latitude = postcard.PostcardData.Latitude,
-                CollectRangeInMeters = postcard.PostcardData.CollectRangeInMeters
+                CollectRangeInMeters = postcard.PostcardData.CollectRangeInMeters,
+                Type = postcard.PostcardData.Type,
             };
         });
     }

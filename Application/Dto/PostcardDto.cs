@@ -8,7 +8,6 @@ public class PostcardDto : IMap
     public string Title { get; set; }
     public string Content { get; set; }
     public int PostcardDataId { get; set; }
-    public string Type { get; set; }
     public DateTime CreatedAt { get; set; }
     public int UserId { get; set; }
     public bool IsSent { get; set; }

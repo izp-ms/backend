@@ -12,7 +12,6 @@ public static class PostcardMapper
             Title = postcard.Title,
             Content = postcard.Content,
             PostcardDataId = postcard.PostcardDataId,
-            Type = postcard.Type,
             CreatedAt = postcard.CreatedAt,
             UserId = userId,
             IsSent = postcard.IsSent

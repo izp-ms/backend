@@ -3,6 +3,7 @@ using Application.Helpers;
 using Application.Interfaces;
 using Application.Requests;
 using Application.Response;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,17 +18,20 @@ public class PostcardController : ControllerBase
     private readonly IPostcardService _postcardService;
     private readonly IUserContextService _userContextService;
     private readonly IMemoryCache _cache;
+    private readonly CacheSettings _cacheSettings;
     private readonly ILogger<PostcardController> _logger;
 
     public PostcardController(
         IPostcardService postcardService,
         IUserContextService userContextService,
         IMemoryCache cache,
+        CacheSettings cacheSettings,
         ILogger<PostcardController> logger)
     {
         _postcardService = postcardService;
         _userContextService = userContextService;
         _cache = cache;
+        _cacheSettings = cacheSettings;
         _logger = logger;
     }
 
@@ -51,8 +55,8 @@ public class PostcardController : ControllerBase
             {
                 postcards = await _postcardService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
                     .SetPriority(CacheItemPriority.Normal);
                 _cache.Set(cacheKey, postcards, cacheEntryOptions);
             }

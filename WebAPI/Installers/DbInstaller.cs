@@ -10,7 +10,6 @@ public class DbInstaller : IInstaller
         services.AddDbContext<DataContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
-            // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
     }
 }
