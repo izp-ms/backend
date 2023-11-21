@@ -4,6 +4,7 @@ using Application.Interfaces;
 using Application.Requests;
 using Application.Response;
 using Domain.Entities;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,17 +18,20 @@ public class UserController : ControllerBase
     private readonly IUserService _userService;
     private readonly IUserContextService _userContextService;
     private readonly IMemoryCache _cache;
+    private readonly CacheSettings _cacheSettings;
     private readonly ILogger<UserController> _logger;
 
     public UserController(
         IUserService userService,
         IUserContextService userContextService,
         IMemoryCache cache,
+        CacheSettings cacheSettings,
         ILogger<UserController> logger)
     {
         _userService = userService;
         _userContextService = userContextService;
         _cache = cache;
+        _cacheSettings = cacheSettings;
         _logger = logger;
     }
 
@@ -47,8 +51,8 @@ public class UserController : ControllerBase
             {
                 users = await _userService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
                     .SetPriority(CacheItemPriority.Normal);
                 _cache.Set(cacheKey, users, cacheEntryOptions);
             }
@@ -75,8 +79,8 @@ public class UserController : ControllerBase
             {
                 userData = await _userService.GetUser(userId);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
                     .SetPriority(CacheItemPriority.Normal);
                 _cache.Set(cacheKey, userData, cacheEntryOptions);
             }

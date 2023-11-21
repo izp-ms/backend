@@ -80,7 +80,6 @@ public class PostcardDataService : IPostcardDataService
                 Title = "",
                 Content = "",
                 PostcardDataId = postcardDataId,
-                Type = "PLACE",
                 CreatedAt = DateTime.UtcNow,
                 IsSent = false,
             });

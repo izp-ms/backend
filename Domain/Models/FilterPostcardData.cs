@@ -8,6 +8,7 @@ public class FiltersPostcardData
     public string Longitude { get; set; }
     public string Latitude { get; set; }
     public int? CollectRangeInMeters { get; set; }
+    public string Type { get; set; }
     public DateTime? DateFrom { get; set; }
     public DateTime? DateTo { get; set; }
     public int? UserId { get; set; }

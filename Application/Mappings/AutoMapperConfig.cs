@@ -100,7 +100,6 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.Order))
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Postcard.Title))
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Postcard.Content))
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Postcard.Type))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Postcard.CreatedAt))
                 .ForMember(dest => dest.IsSent, opt => opt.MapFrom(src => src.Postcard.IsSent))
                 .ForMember(dest => dest.ImageBase64, opt => opt.MapFrom(src => src.Postcard.PostcardData.ImageBase64))
@@ -110,6 +109,7 @@ public static class AutoMapperConfig
                 .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Postcard.PostcardData.Longitude))
                 .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Postcard.PostcardData.Latitude))
                 .ForMember(dest => dest.CollectRangeInMeters, opt => opt.MapFrom(src => src.Postcard.PostcardData.CollectRangeInMeters))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Postcard.PostcardData.Type))
                 .ForMember(dest => dest.PostcardDataCreatedAt, opt => opt.MapFrom(src => src.Postcard.PostcardData.CreatedAt));
 
             cfg.CreateMap<UpdateFavouritePostcardRequest, FavouritePostcard>()

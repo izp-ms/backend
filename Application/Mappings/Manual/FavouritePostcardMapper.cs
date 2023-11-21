@@ -31,7 +31,6 @@ public static class FavouritePostcardMapper
                 Order = favouritePostcard.Order,
                 Title = favouritePostcard.Postcard.Title,
                 Content = favouritePostcard.Postcard.Content,
-                Type = favouritePostcard.Postcard.Type,
                 CreatedAt = favouritePostcard.Postcard.CreatedAt,
                 IsSent = favouritePostcard.Postcard.IsSent,
                 ImageBase64 = favouritePostcard.Postcard.PostcardData.ImageBase64,
@@ -41,6 +40,7 @@ public static class FavouritePostcardMapper
                 Longitude = favouritePostcard.Postcard.PostcardData.Longitude,
                 Latitude = favouritePostcard.Postcard.PostcardData.Latitude,
                 CollectRangeInMeters = favouritePostcard.Postcard.PostcardData.CollectRangeInMeters,
+                Type = favouritePostcard.Postcard.PostcardData.Type,
                 PostcardDataCreatedAt = favouritePostcard.Postcard.PostcardData.CreatedAt
             };
         });

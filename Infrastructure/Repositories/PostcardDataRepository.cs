@@ -79,6 +79,11 @@ public class PostcardDataRepository : Repository<PostcardData>, IPostcardDataRep
             query = query.Where(x => x.Latitude.ToLower() == filters.Latitude.ToLower());
         }
 
+        if (!string.IsNullOrEmpty(filters.Type))
+        {
+            query = query.Where(x => x.Type.ToLower() == filters.Type.ToLower());
+        }
+
         if (filters.CollectRangeInMeters.HasValue)
         {
             query = query.Where(x => x.CollectRangeInMeters == filters.CollectRangeInMeters);
@@ -115,6 +120,7 @@ public class PostcardDataRepository : Repository<PostcardData>, IPostcardDataRep
             "longitude" => direction == "asc" ? query.OrderBy(x => x.Longitude) : query.OrderByDescending(x => x.Longitude),
             "latitude" => direction == "asc" ? query.OrderBy(x => x.Latitude) : query.OrderByDescending(x => x.Latitude),
             "collectRangeInMeters" => direction == "asc" ? query.OrderBy(x => x.CollectRangeInMeters) : query.OrderByDescending(x => x.CollectRangeInMeters),
+            "type" => direction == "asc" ? query.OrderBy(x => x.Type) : query.OrderByDescending(x => x.Type),
             "createdAt" => direction == "asc" ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
             _ => query.OrderBy(x => x.Id),
         };

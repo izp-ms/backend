@@ -51,11 +51,6 @@ public class PostcardRepository : Repository<Postcard>, IPostcardRepository
                 );
         }
 
-        if (!string.IsNullOrEmpty(filters.Type))
-        {
-            query = query.Where(x => x.Type.ToLower() == filters.Type.ToLower());
-        }
-
         if (filters.IsSent.HasValue)
         {
             query = query.Where(x => x.IsSent == filters.IsSent);
@@ -88,7 +83,6 @@ public class PostcardRepository : Repository<Postcard>, IPostcardRepository
         {
             "title" => direction == "asc" ? query.OrderBy(x => x.Title) : query.OrderByDescending(x => x.Title),
             "content" => direction == "asc" ? query.OrderBy(x => x.Content) : query.OrderByDescending(x => x.Content),
-            "type" => direction == "asc" ? query.OrderBy(x => x.Type) : query.OrderByDescending(x => x.Type),
             "isSent" => direction == "asc" ? query.OrderBy(x => x.IsSent) : query.OrderByDescending(x => x.IsSent),
             "createdAt" => direction == "asc" ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt),
             _ => query.OrderBy(x => x.Id),
