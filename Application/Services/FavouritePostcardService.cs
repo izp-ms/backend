@@ -38,7 +38,7 @@ public class FavouritePostcardService : IFavouritePostcardService
             throw new ArgumentNullException(nameof(favouritePostcardDtos));
         }
 
-        if (!await IsPostcardIdValid(favouritePostcardDtos))
+        if (await IsPostcardIdValid(favouritePostcardDtos))
         {
             throw new ArgumentException("User doesn't have postcard with given ids");
         }
@@ -66,9 +66,9 @@ public class FavouritePostcardService : IFavouritePostcardService
     {
         IEnumerable<UserPostcard> userPostcards = await _userPostcardRepository.GetUserPostcardByUserId(favouritePostcardDtos.UserId);
 
-        return userPostcards.ToList().Where(postcard =>
+        return favouritePostcardDtos.PostcardIdsWithOrders.ToList().Where(postcard =>
         {
-            if (!favouritePostcardDtos.PostcardIdsWithOrders.Any(data => data.PostcardId == postcard.PostcardId))
+            if (!userPostcards.Any(data => data.PostcardId == postcard.PostcardId))
             {
                 return true;
             }
