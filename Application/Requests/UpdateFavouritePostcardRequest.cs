@@ -8,6 +8,6 @@ public class PostcardIdWithOrderId
 
 public class UpdateFavouritePostcardRequest
 {
-    public int UserId { get; set; }
+    public int UserId { get; set; } = 0;
     public IEnumerable<PostcardIdWithOrderId> PostcardIdsWithOrders { get; set; } = new List<PostcardIdWithOrderId>();
 }

@@ -44,11 +44,7 @@ public class FavouritePostcardController : ControllerBase
         _logger.Log(LogLevel.Information, "Update favourite postcards");
         try
         {
-            if (_userContextService.GetUserId != updateFavouritePostcardRequest.UserId)
-            {
-                _logger.Log(LogLevel.Information, $"User with id: {_userContextService.GetUserId} tried to update favourite postcards with id: {updateFavouritePostcardRequest.UserId}");
-                return BadRequest(new { message = "Unauthorized" });
-            }
+            updateFavouritePostcardRequest.UserId = (int)_userContextService.GetUserId;
             IEnumerable<FavouritePostcardDto> updatedFavouritePostcards = await _favouritePostcardService.UpdateFavouritePostcards(updateFavouritePostcardRequest);
             _logger.Log(LogLevel.Information, $"Updated favourite postcards with id: {updatedFavouritePostcards}");
             return Ok(updatedFavouritePostcards);
