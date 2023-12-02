@@ -37,11 +37,22 @@ public class UserFriendsService : IUserFriendsService
         return FriendsMapper.Map(userFriends);
     }
 
+    public async Task<bool> IsFollowing(int userId, int friendId)
+    {
+        UserFriends userFriends = await _userFriendsRepository.GetByUserIdAndFriendId(userId, friendId);
+        return userFriends != null;
+    }
+
     public async Task<FriendDto> AddNewFriend(UserFriendRequest addUserFriendRequest)
     {
         if (!await _userService.IsUserActive(addUserFriendRequest.FriendId))
         {
             throw new Exception("User is not active");
+        }
+
+        if (await _userFriendsRepository.GetByUserIdAndFriendId(addUserFriendRequest.UserId, addUserFriendRequest.FriendId) != null)
+        {
+            throw new Exception("User friend already exists");
         }
 
         UserFriends userFriends = await _userFriendsRepository.Insert(new UserFriends

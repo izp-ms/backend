@@ -43,6 +43,7 @@ public static class FiltersMapper
             Search = request.Search,
             Email = request.Email,
             NickName = request.NickName,
+            UserId = request.UserId,
             CreatedFrom = request.CreatedFrom,
             CreatedTo = request.CreatedTo,
             OrderBy = request.OrderBy

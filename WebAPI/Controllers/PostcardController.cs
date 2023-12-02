@@ -61,6 +61,8 @@ public class PostcardController : ControllerBase
                 _cache.Set(cacheKey, postcards, cacheEntryOptions);
             }
 
+            postcards = await _postcardService.GetPagination(pagination, filters);
+
             return Ok(postcards);
         }
         catch (Exception ex)

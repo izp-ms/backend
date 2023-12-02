@@ -19,6 +19,7 @@ public static class FriendsMapper
                 LastName = userFriend.Friend.UsersDetails.LastName,
                 BirthDate = userFriend.Friend.UsersDetails.BirthDate,
                 AvatarBase64 = userFriend.Friend.UsersDetails.AvatarBase64,
+                BackgroundBase64 = userFriend.Friend.UsersDetails.BackgroundBase64,
                 Description = userFriend.Friend.UsersDetails.Description,
                 City = userFriend.Friend.Address.City,
                 Country = userFriend.Friend.Address.Country,

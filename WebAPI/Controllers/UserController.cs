@@ -49,6 +49,7 @@ public class UserController : ControllerBase
         {
             if (!_cache.TryGetValue(cacheKey, out PaginationResponse<UserDto> users))
             {
+                filters.UserId = (int)_userContextService.GetUserId;
                 users = await _userService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))

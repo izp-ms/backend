@@ -54,6 +54,22 @@ public class UserFriendsController : ControllerBase
         }
     }
 
+    [HttpGet("IsFollowing/{id}")]
+    public async Task<IActionResult> IsFollowing(int id)
+    {
+        _logger.Log(LogLevel.Information, "Check if user is following");
+        try
+        {
+            bool isFollowing = await _userFriendsService.IsFollowing((int)_userContextService.GetUserId, id);
+            return Ok(isFollowing);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to check if user is following: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddNewFriend([FromBody] UserFriendRequest addUserFriendRequest)
     {
