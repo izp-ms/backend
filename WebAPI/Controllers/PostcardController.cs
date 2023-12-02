@@ -55,8 +55,8 @@ public class PostcardController : ControllerBase
             {
                 postcards = await _postcardService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
                     .SetPriority(CacheItemPriority.Normal);
                 _cache.Set(cacheKey, postcards, cacheEntryOptions);
             }

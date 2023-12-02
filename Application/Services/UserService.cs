@@ -66,10 +66,8 @@ public class UserService : IUserService
         _mapper.Map(userStat, userDto);
 
         int postcardsCount = await _postcardDataRepository.TotalCountByUserId(userId);
-        IEnumerable<UserFriends> followersUsers = await _userFriendsRepository.GetFollowers(userId);
-        int followersCount = followersUsers.Count();
-        IEnumerable<UserFriends> followingUsers = await _userFriendsRepository.GetFollowing(userId);
-        int followingCount = followingUsers.Count();
+        int followersCount = await _userFriendsRepository.FollowersCount(userId);
+        int followingCount = await _userFriendsRepository.FollowingCount(userId);
 
         userDto.PostcardsCount = postcardsCount;
         userDto.FollowersCount = followersCount;

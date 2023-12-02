@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Application.Mappings.Manual;
 using Application.Requests;
+using Application.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -25,16 +26,46 @@ public class UserFriendsService : IUserFriendsService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<FriendDto>> GetFollowing(int userId)
+    public async Task<PaginationResponse<FriendDto>> GetPaginatedFollowing(PaginationRequest pagination, FiltersUserRequest filters)
     {
-        IEnumerable<UserFriends> userFriends = await _userFriendsRepository.GetFollowing(userId);
-        return FriendsMapper.Map(userFriends);
+        IEnumerable<UserFriends> allUserFollowing = await _userFriendsRepository.GetAllFollowing(FiltersMapper.Map(filters));
+        IEnumerable<UserFriends> userFollowing = await _userFriendsRepository.GetPaginatedFollowing(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
+
+        IEnumerable<FriendDto> mappedFollowing = FriendsMapper.MapFollowing(userFollowing);
+
+        int totalPages = (int)Math.Ceiling(allUserFollowing.Count() / (double)pagination.PageSize);
+
+        PaginationResponse<FriendDto> paginationResponse = new PaginationResponse<FriendDto>()
+        {
+            PageNumber = pagination.PageNumber,
+            PageSize = pagination.PageSize,
+            TotalCount = allUserFollowing.Count(),
+            TotalPages = totalPages,
+            Content = mappedFollowing
+        };
+
+        return paginationResponse;
     }
 
-    public async Task<IEnumerable<FriendDto>> GetFollowers(int userId)
+    public async Task<PaginationResponse<FriendDto>> GetPaginatedFollowers(PaginationRequest pagination, FiltersUserRequest filters)
     {
-        IEnumerable<UserFriends> userFriends = await _userFriendsRepository.GetFollowers(userId);
-        return FriendsMapper.Map(userFriends);
+        IEnumerable<UserFriends> allUserFollowers = await _userFriendsRepository.GetAllFollowers(FiltersMapper.Map(filters));
+        IEnumerable<UserFriends> userFollowers = await _userFriendsRepository.GetPaginatedFollowers(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
+
+        IEnumerable<FriendDto> mappedFollowers = FriendsMapper.MapFollowers(userFollowers);
+
+        int totalPages = (int)Math.Ceiling(allUserFollowers.Count() / (double)pagination.PageSize);
+
+        PaginationResponse<FriendDto> paginationResponse = new PaginationResponse<FriendDto>()
+        {
+            PageNumber = pagination.PageNumber,
+            PageSize = pagination.PageSize,
+            TotalCount = allUserFollowers.Count(),
+            TotalPages = totalPages,
+            Content = mappedFollowers
+        };
+
+        return paginationResponse;
     }
 
     public async Task<bool> IsFollowing(int userId, int friendId)
