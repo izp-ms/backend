@@ -129,6 +129,11 @@ public class UserRepository : Repository<User>, IUserRepository
             query = OrderBy(query, filters.OrderBy);
         }
 
+        if (filters.UserId != 0)
+        {
+            query = query.Where(x => x.Id != filters.UserId);
+        }
+
         return query;
     }
 

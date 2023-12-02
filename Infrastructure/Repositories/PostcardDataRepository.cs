@@ -18,9 +18,9 @@ public class PostcardDataRepository : Repository<PostcardData>, IPostcardDataRep
 
     public async Task<int> TotalCountByUserId(int userId)
     {
-        return await _dataContext.PostcardData
-            .Include(x => x.Postcards)
-            .Where(x => x.Postcards.Any(x => x.Users.Any(x => x.Id == userId)))
+        return await _dataContext.PostcardCollection
+            .Include(x => x.PostcardData)
+            .Where(x => x.UserId == userId)
             .CountAsync();
     }
 

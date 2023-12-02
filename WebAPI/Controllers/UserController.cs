@@ -49,10 +49,11 @@ public class UserController : ControllerBase
         {
             if (!_cache.TryGetValue(cacheKey, out PaginationResponse<UserDto> users))
             {
+                filters.UserId = (int)_userContextService.GetUserId;
                 users = await _userService.GetPagination(pagination, filters);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
                     .SetPriority(CacheItemPriority.Normal);
                 _cache.Set(cacheKey, users, cacheEntryOptions);
             }
@@ -79,8 +80,8 @@ public class UserController : ControllerBase
             {
                 userData = await _userService.GetUser(userId);
                 MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheSettings.CacheTimeInSeconds))
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
                     .SetPriority(CacheItemPriority.Normal);
                 _cache.Set(cacheKey, userData, cacheEntryOptions);
             }

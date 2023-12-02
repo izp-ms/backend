@@ -1,8 +1,12 @@
 ﻿using Application.Dto;
+using Application.Helpers;
 using Application.Interfaces;
 using Application.Requests;
+using Application.Response;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace WebAPI.Controllers;
 
@@ -13,23 +17,47 @@ public class UserFriendsController : ControllerBase
 {
     private readonly IUserFriendsService _userFriendsService;
     private readonly IUserContextService _userContextService;
+    private readonly IMemoryCache _cache;
+    private readonly CacheSettings _cacheSettings;
     private readonly ILogger<UserFriendsController> _logger;
 
-    public UserFriendsController(IUserFriendsService userFriendsService, IUserContextService userContextService, ILogger<UserFriendsController> logger)
+    public UserFriendsController(
+        IUserFriendsService userFriendsService,
+        IUserContextService userContextService,
+        IMemoryCache cache,
+        CacheSettings cacheSettings,
+        ILogger<UserFriendsController> logger
+    )
     {
         _userFriendsService = userFriendsService;
         _userContextService = userContextService;
+        _cache = cache;
+        _cacheSettings = cacheSettings;
         _logger = logger;
     }
 
-    [HttpGet("Following/{id}")]
-    public async Task<IActionResult> GetFollowingByUserId(int id)
+    [HttpGet("Following")]
+    public async Task<IActionResult> GetPaginatedFollowings(
+        [FromQuery] PaginationRequest pagination,
+        [FromQuery] FiltersUserRequest filters
+    )
     {
         _logger.Log(LogLevel.Information, "Get following");
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
+
         try
         {
-            IEnumerable<FriendDto> following = await _userFriendsService.GetFollowing(id);
-            return Ok(following);
+            if (!_cache.TryGetValue(cacheKey, out PaginationResponse<FriendDto> followings))
+            {
+                followings = await _userFriendsService.GetPaginatedFollowing(pagination, filters);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, followings, cacheEntryOptions);
+            }
+
+            return Ok(followings);
         }
         catch (Exception ex)
         {
@@ -38,18 +66,47 @@ public class UserFriendsController : ControllerBase
         }
     }
 
-    [HttpGet("Followers/{id}")]
-    public async Task<IActionResult> GetFollowersByUserId(int id)
+    [HttpGet("Followers")]
+    public async Task<IActionResult> GetPaginatedFollowers(
+        [FromQuery] PaginationRequest pagination,
+        [FromQuery] FiltersUserRequest filters)
     {
         _logger.Log(LogLevel.Information, "Get followers");
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
+
         try
         {
-            IEnumerable<FriendDto> followers = await _userFriendsService.GetFollowers(id);
+            if (!_cache.TryGetValue(cacheKey, out PaginationResponse<FriendDto> followers))
+            {
+                followers = await _userFriendsService.GetPaginatedFollowers(pagination, filters);
+                MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(_cacheSettings.CacheTimeInSeconds))
+                    .SetPriority(CacheItemPriority.Normal);
+                _cache.Set(cacheKey, followers, cacheEntryOptions);
+            }
+
             return Ok(followers);
         }
         catch (Exception ex)
         {
             _logger.Log(LogLevel.Information, $"Failed to get followers: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("IsFollowing/{id}")]
+    public async Task<IActionResult> IsFollowing(int id)
+    {
+        _logger.Log(LogLevel.Information, "Check if user is following");
+        try
+        {
+            bool isFollowing = await _userFriendsService.IsFollowing((int)_userContextService.GetUserId, id);
+            return Ok(isFollowing);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Information, $"Failed to check if user is following: {ex.Message}");
             return BadRequest(new { message = ex.Message });
         }
     }
