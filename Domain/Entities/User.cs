@@ -13,5 +13,6 @@ public class User : BaseEntity
     public virtual UserStat UsersStats { get; set; }
     public virtual Address Address { get; set; }
     public virtual IEnumerable<Postcard> Postcards { get; set; } = new List<Postcard>();
+    public virtual IEnumerable<PostcardData> PostcardDatas { get; set; } = new List<PostcardData>();
     public virtual IEnumerable<UserFriends> Friends { get; set; } = new List<UserFriends>();
 }

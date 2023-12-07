@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 
 namespace Application.Helpers;
+
 public static class DoubleExtensions
 {
     public static double ToDouble(this string input)

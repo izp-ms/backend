@@ -19,7 +19,6 @@ public class PostcardDataRepository : Repository<PostcardData>, IPostcardDataRep
     public async Task<int> TotalCountByUserId(int userId)
     {
         return await _dataContext.PostcardCollection
-            .Include(x => x.PostcardData)
             .Where(x => x.UserId == userId)
             .CountAsync();
     }
@@ -51,7 +50,7 @@ public class PostcardDataRepository : Repository<PostcardData>, IPostcardDataRep
     {
         if (filters.UserId.HasValue)
         {
-            query = query.Where(x => x.Postcards.Any(x => x.Users.Any(x => x.Id == filters.UserId)));
+            query = query.Where(x => x.Users.Any(x => x.Id == filters.UserId));
         }
 
         if (!string.IsNullOrEmpty(filters.Search))
