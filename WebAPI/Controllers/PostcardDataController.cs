@@ -83,7 +83,7 @@ public class PostcardDataController : ControllerBase
     }
 
     [HttpPost("Collect")]
-    public async Task<IActionResult> CollectPostcardDate([FromBody] CollectPostcardDataRequest request)
+    public async Task<IActionResult> CollectPostcardData([FromBody] CollectPostcardDataRequest request)
     {
         _logger.Log(LogLevel.Information, "Collect postcard data");
         try
