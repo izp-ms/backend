@@ -155,7 +155,12 @@ public class PostcardDataService : IPostcardDataService
                     Latitude = postcard.Latitude,
                     Longitude = postcard.Longitude,
                     CollectRangeInMeters = postcard.CollectRangeInMeters,
-                    ImageBase64 = postcard.ImageBase64
+                    ImageBase64 = postcard.ImageBase64,
+                    Country = postcard.Country,
+                    City = postcard.City,
+                    Title = postcard.Title,
+                    Type = postcard.Type,
+                    CreatedAt = postcard.CreatedAt
                 });
             }
             else if (distance <= coordinateRequest.PostcardNotificationRangeInMeters)
@@ -166,7 +171,12 @@ public class PostcardDataService : IPostcardDataService
                     Latitude = postcard.Latitude,
                     Longitude = postcard.Longitude,
                     CollectRangeInMeters = postcard.CollectRangeInMeters,
-                    ImageBase64 = postcard.ImageBase64
+                    ImageBase64 = postcard.ImageBase64,
+                    Country = postcard.Country,
+                    City = postcard.City,
+                    Title = postcard.Title,
+                    Type = postcard.Type,
+                    CreatedAt = postcard.CreatedAt
                 });
             }
         });
