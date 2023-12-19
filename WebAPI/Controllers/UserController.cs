@@ -43,7 +43,7 @@ public class UserController : ControllerBase
     )
     {
         _logger.Log(LogLevel.Information, "Get users");
-        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters, "users");
 
         try
         {

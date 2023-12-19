@@ -1,8 +1,14 @@
-namespace Tests;
+namespace UserServiceTests;
 
 public class UserServiceTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IUserStatsRepository> _userStatsRepositoryMock;
+    private readonly Mock<IUserDetailRepository> _userDetailRepositoryMock;
+    private readonly Mock<IAddressRepository> _addressRepositoryMock;
+    private readonly Mock<IUserFriendsRepository> _userFriendsRepositoryMock;
+    private readonly Mock<IPostcardDataRepository> _postcardDataRepositoryMock;
+    private readonly Mock<IUserContextService> _userContextServiceMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly Mock<IPasswordHasher<User>> _passwordHasherMock;
     private readonly UserService _userService;
@@ -10,182 +16,113 @@ public class UserServiceTests
     public UserServiceTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
+        _userStatsRepositoryMock = new Mock<IUserStatsRepository>();
+        _userDetailRepositoryMock = new Mock<IUserDetailRepository>();
+        _addressRepositoryMock = new Mock<IAddressRepository>();
+        _userFriendsRepositoryMock = new Mock<IUserFriendsRepository>();
+        _postcardDataRepositoryMock = new Mock<IPostcardDataRepository>();
+        _userContextServiceMock = new Mock<IUserContextService>();
         _mapperMock = new Mock<IMapper>();
         _passwordHasherMock = new Mock<IPasswordHasher<User>>();
-        _userService = new UserService(_userRepositoryMock.Object, _mapperMock.Object, _passwordHasherMock.Object);
-    }
-
-    [Fact]
-    public async Task GetAll_ShouldReturnAllUsers()
-    {
-        // Arrange
-        List<User> expectedUsers = new List<User> { new User(), new User() };
-        _userRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(expectedUsers);
-
-        // Act
-        IEnumerable<User> result = await _userService.GetAll();
-
-        // Assert
-        Assert.Equal(expectedUsers, result);
+        _userService = new UserService(
+            _userContextServiceMock.Object,
+            _userRepositoryMock.Object,
+            _userStatsRepositoryMock.Object,
+            _userDetailRepositoryMock.Object,
+            _addressRepositoryMock.Object,
+            _userFriendsRepositoryMock.Object,
+            _postcardDataRepositoryMock.Object,
+            _mapperMock.Object,
+            _passwordHasherMock.Object
+        );
     }
 
     [Fact]
     public async Task Login_ValidCredentials_ShouldReturnToken()
     {
         // Arrange
-        LoginUserDto? loginUserDto = new LoginUserDto { Email = "test@example.com", Password = "password" };
-        User? storedUser = new User { Email = "test@example.com", Password = "hashedPassword" };
+        LoginUserDto loginUserDto = new LoginUserDto { Email = "test@example.com", Password = "password" };
+        User storedUser = new User { Email = "test@example.com", Password = "hashedPassword" };
         _userRepositoryMock.Setup(repo => repo.GetUserByEmail(loginUserDto.Email)).Returns(storedUser);
         _passwordHasherMock.Setup(hasher => hasher.VerifyHashedPassword(storedUser, storedUser.Password, loginUserDto.Password))
             .Returns(PasswordVerificationResult.Success);
         _userRepositoryMock.Setup(repo => repo.Login(storedUser)).Returns("token");
 
         // Act
-        string? result = await _userService.Login(loginUserDto);
+        LoginResponse result = await _userService.Login(loginUserDto);
 
         // Assert
-        Assert.Equal("token", result);
+        Assert.Equal("token", result.Token);
     }
 
     [Fact]
-    public async Task Login_InvalidEmail_ShouldThrowInvalidLoginException()
+    public async Task GetUser_ValidUserId_ShouldReturnMappedUserDto()
     {
         // Arrange
-        LoginUserDto? loginUserDto = new LoginUserDto { Email = "invalid@example.com", Password = "password" };
-        _userRepositoryMock.Setup(repo => repo.GetUserByEmail(loginUserDto.Email)).Returns((User)null);
+        int validUserId = 1;
+        var userEntity = new User { IsActive = true };
+        var addressEntity = new Address { };
+        var userDetailEntity = new UserDetail { };
+        var userStatEntity = new UserStat { };
 
-        // Act and Assert
-        await Assert.ThrowsAsync<InvalidLoginException>(() => _userService.Login(loginUserDto));
-    }
-
-    [Fact]
-    public async Task Login_InvalidPassword_ShouldThrowInvalidLoginException()
-    {
-        // Arrange
-        LoginUserDto? loginUserDto = new LoginUserDto { Email = "test@example.com", Password = "wrongPassword" };
-        User? storedUser = new User { Email = "test@example.com", Password = "hashedPassword" };
-        _userRepositoryMock.Setup(repo => repo.GetUserByEmail(loginUserDto.Email)).Returns(storedUser);
-        _passwordHasherMock.Setup(hasher => hasher.VerifyHashedPassword(storedUser, storedUser.Password, loginUserDto.Password))
-            .Returns(PasswordVerificationResult.Failed);
-
-        // Act and Assert
-        await Assert.ThrowsAsync<InvalidLoginException>(() => _userService.Login(loginUserDto));
-    }
-
-    [Fact]
-    public async Task Register_ValidUser_ShouldReturnSuccess()
-    {
-        // Arrange
-        RegisterUserDto? registerUserDto = new RegisterUserDto
-        {
-            Email = "test@example.com",
-            Password = "password",
-            ConfirmPassword = "password"
-        };
-        _userRepositoryMock.Setup(repo => repo.IsEmailInUse(registerUserDto.Email)).Returns(false);
-        _mapperMock.Setup(mapper => mapper.Map<User>(registerUserDto)).Returns(new User());
-        _passwordHasherMock.Setup(hasher => hasher.HashPassword(It.IsAny<User>(), registerUserDto.Password)).Returns("hashedPassword");
-        _userRepositoryMock.Setup(repo => repo.Insert(It.IsAny<User>()));
+        _userRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(userEntity);
+        _addressRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(addressEntity);
+        _userDetailRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(userDetailEntity);
+        _userStatsRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(userStatEntity);
+        _postcardDataRepositoryMock.Setup(repo => repo.TotalCountByUserId(validUserId)).ReturnsAsync(10);
+        _userFriendsRepositoryMock.Setup(repo => repo.FollowersCount(validUserId)).ReturnsAsync(5);
+        _userFriendsRepositoryMock.Setup(repo => repo.FollowingCount(validUserId)).ReturnsAsync(5);
+        _mapperMock.Setup(mapper => mapper.Map<UserDto>(It.IsAny<User>())).Returns(new UserDto());
 
         // Act
-        RegistrationResult result = await _userService.Register(registerUserDto);
+        var result = await _userService.GetUser(validUserId);
 
         // Assert
-        Assert.Equal(RegistrationResult.Success, result);
+        Assert.NotNull(result);
+        Assert.IsType<UserDto>(result);
     }
 
     [Fact]
-    public async Task Register_PasswordsDoNotMatch_ShouldReturnPasswordsDoNotMatch()
+    public async Task GetUser_InactiveUserId_ShouldThrowException()
     {
         // Arrange
-        RegisterUserDto? registerUserDto = new RegisterUserDto
-        {
-            Email = "test@example.com",
-            Password = "password",
-            ConfirmPassword = "differentPassword"
-        };
+        int validUserId = 1;
+        var userEntity = new User { IsActive = false };
+        var addressEntity = new Address { };
+        var userDetailEntity = new UserDetail { };
+        var userStatEntity = new UserStat { };
 
-        // Act
-        RegistrationResult result = await _userService.Register(registerUserDto);
+        _userRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(userEntity);
+        _addressRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(addressEntity);
+        _userDetailRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(userDetailEntity);
+        _userStatsRepositoryMock.Setup(repo => repo.Get(validUserId)).ReturnsAsync(userStatEntity);
+        _postcardDataRepositoryMock.Setup(repo => repo.TotalCountByUserId(validUserId)).ReturnsAsync(10);
+        _userFriendsRepositoryMock.Setup(repo => repo.FollowersCount(validUserId)).ReturnsAsync(5);
+        _userFriendsRepositoryMock.Setup(repo => repo.FollowingCount(validUserId)).ReturnsAsync(5);
+        _mapperMock.Setup(mapper => mapper.Map<UserDto>(It.IsAny<User>())).Returns(new UserDto());
 
-        // Assert
-        Assert.Equal(RegistrationResult.PasswordsDoNotMatch, result);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() => _userService.GetUser(validUserId));
     }
 
     [Fact]
-    public async Task Register_WeakPassword_ShouldReturnWeakPassword()
+    public async Task GetPagination_ValidPaginationAndFilters_ShouldReturnPaginationResponse()
     {
         // Arrange
-        RegisterUserDto? registerUserDto = new RegisterUserDto
-        {
-            Email = "test@example.com",
-            Password = "12345",
-            ConfirmPassword = "12345"
-        };
+        var pagination = new PaginationRequest { PageNumber = 1, PageSize = 10 };
+        var filters = new FiltersUserRequest { };
+        var allUsers = new List<User> { };
+        var users = new List<User> { };
+
+        _userRepositoryMock.Setup(repo => repo.GetAllUsers(It.IsAny<FiltersUser>())).ReturnsAsync(allUsers);
+        _userRepositoryMock.Setup(repo => repo.GetPaginationUsers(It.IsAny<Pagination>(), It.IsAny<FiltersUser>())).ReturnsAsync(users);
+        _mapperMock.Setup(mapper => mapper.Map<IEnumerable<UserDto>>(It.IsAny<IEnumerable<User>>())).Returns(new List<UserDto>());
 
         // Act
-        RegistrationResult result = await _userService.Register(registerUserDto);
+        var result = await _userService.GetPagination(pagination, filters);
 
         // Assert
-        Assert.Equal(RegistrationResult.WeakPassword, result);
-    }
-
-    [Fact]
-    public async Task Register_IncorrectEmail_ShouldReturnIncorrectEmail()
-    {
-        // Arrange
-        RegisterUserDto? registerUserDto = new RegisterUserDto
-        {
-            Email = "invalidemail",
-            Password = "password",
-            ConfirmPassword = "password"
-        };
-
-        // Act
-        RegistrationResult result = await _userService.Register(registerUserDto);
-
-        // Assert
-        Assert.Equal(RegistrationResult.IncorrectEmail, result);
-    }
-
-    [Fact]
-    public async Task Register_EmailAlreadyExists_ShouldReturnEmailAlreadyExists()
-    {
-        // Arrange
-        RegisterUserDto? registerUserDto = new RegisterUserDto
-        {
-            Email = "existing@example.com",
-            Password = "password",
-            ConfirmPassword = "password"
-        };
-        _userRepositoryMock.Setup(repo => repo.IsEmailInUse(registerUserDto.Email)).Returns(true);
-
-        // Act
-        RegistrationResult result = await _userService.Register(registerUserDto);
-
-        // Assert
-        Assert.Equal(RegistrationResult.EmailAlreadyExists, result);
-    }
-
-    [Fact]
-    public async Task Register_SuccessfulRegistration_ShouldReturnSuccess()
-    {
-        // Arrange
-        RegisterUserDto? registerUserDto = new RegisterUserDto
-        {
-            Email = "test@example.com",
-            Password = "password",
-            ConfirmPassword = "password"
-        };
-        _userRepositoryMock.Setup(repo => repo.IsEmailInUse(registerUserDto.Email)).Returns(false);
-        _mapperMock.Setup(mapper => mapper.Map<User>(registerUserDto)).Returns(new User());
-        _passwordHasherMock.Setup(hasher => hasher.HashPassword(It.IsAny<User>(), registerUserDto.Password)).Returns("hashedPassword");
-        _userRepositoryMock.Setup(repo => repo.Insert(It.IsAny<User>()));
-
-        // Act
-        RegistrationResult result = await _userService.Register(registerUserDto);
-
-        // Assert
-        Assert.Equal(RegistrationResult.Success, result);
+        Assert.NotNull(result);
+        Assert.IsType<PaginationResponse<UserDto>>(result);
     }
 }

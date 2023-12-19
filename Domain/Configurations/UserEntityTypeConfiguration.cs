@@ -36,6 +36,17 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
                 }
             );
 
+        builder.HasMany(p => p.PostcardDatas)
+            .WithMany(p => p.Users)
+            .UsingEntity<PostcardCollection>(
+                p => p.HasOne(u => u.PostcardData)
+                .WithMany()
+                .HasForeignKey(u => u.PostcardDataId),
+                p => p.HasOne(u => u.User)
+                .WithMany()
+                .HasForeignKey(u => u.UserId)
+            );
+
         builder.Property(p => p.Email).IsRequired().HasMaxLength(320);
         builder.Property(p => p.Password).IsRequired().HasMaxLength(255);
         builder.Property(p => p.NickName).IsRequired().HasMaxLength(32);

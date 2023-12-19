@@ -9,5 +9,5 @@ public class Postcard : BaseEntity
     public bool IsSent { get; set; }
 
     public virtual PostcardData PostcardData { get; set; }
-    public IEnumerable<User> Users { get; set; } = new List<User>();
+    public virtual IEnumerable<User> Users { get; set; } = new List<User>();
 }

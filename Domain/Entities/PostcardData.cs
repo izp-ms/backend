@@ -13,4 +13,5 @@ public class PostcardData : BaseEntity
     public DateTime CreatedAt { get; set; }
 
     public virtual IEnumerable<Postcard> Postcards { get; set; } = new List<Postcard>();
+    public virtual IEnumerable<User> Users { get; set; } = new List<User>();
 }

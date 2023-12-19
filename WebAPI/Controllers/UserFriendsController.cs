@@ -43,7 +43,7 @@ public class UserFriendsController : ControllerBase
     )
     {
         _logger.Log(LogLevel.Information, "Get following");
-        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters, "following");
 
         try
         {
@@ -72,7 +72,7 @@ public class UserFriendsController : ControllerBase
         [FromQuery] FiltersUserRequest filters)
     {
         _logger.Log(LogLevel.Information, "Get followers");
-        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters);
+        string cacheKey = CacheKeyGenerator.GetKey(_userContextService.GetUserId, pagination, filters, "followers");
 
         try
         {

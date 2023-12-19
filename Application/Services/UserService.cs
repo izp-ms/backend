@@ -81,7 +81,7 @@ public class UserService : IUserService
         IEnumerable<User> allUsers = await _userRepository.GetAllUsers(FiltersMapper.Map(filters));
         IEnumerable<User> users = await _userRepository.GetPaginationUsers(PaginationMapper.Map(pagination), FiltersMapper.Map(filters));
 
-        IEnumerable<UserDto> mappedUsers = _mapper.Map<IEnumerable<UserDto>>(users);
+        IEnumerable<UserDto> mappedUsers = UsersMapper.Map(users);
 
         int totalPages = (int)Math.Ceiling(allUsers.Count() / (double)pagination.PageSize);
 

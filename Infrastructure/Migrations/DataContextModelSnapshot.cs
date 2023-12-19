@@ -37,7 +37,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Address");
+                    b.ToTable("Address", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.FavouritePostcard", b =>
@@ -63,7 +63,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FavouritePostcards");
+                    b.ToTable("FavouritePostcards", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Postcard", b =>
@@ -99,7 +99,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PostcardDataId");
 
-                    b.ToTable("Postcards");
+                    b.ToTable("Postcards", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.PostcardCollection", b =>
@@ -122,7 +122,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PostcardCollection");
+                    b.ToTable("PostcardCollection", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.PostcardData", b =>
@@ -177,7 +177,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PostcardData");
+                    b.ToTable("PostcardData", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -218,7 +218,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.UserDetail", b =>
@@ -249,7 +249,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UsersDetails");
+                    b.ToTable("UsersDetails", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.UserFriends", b =>
@@ -272,7 +272,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserFriends");
+                    b.ToTable("UserFriends", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.UserPostcard", b =>
@@ -300,7 +300,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserPostcards");
+                    b.ToTable("UserPostcards", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.UserStat", b =>
@@ -319,7 +319,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UsersStats");
+                    b.ToTable("UsersStats", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Address", b =>
