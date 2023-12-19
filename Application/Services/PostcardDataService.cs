@@ -127,7 +127,15 @@ public class PostcardDataService : IPostcardDataService
         IEnumerable<PostcardData> allUserPostcardsData = await _postcardDataRepository.GetAllPostcardsData(filters);
         IEnumerable<PostcardData> allPostcardsData = await _postcardDataRepository.GetAll();
 
-        List<PostcardData> filteredPostcardData = allPostcardsData.Except(allUserPostcardsData).ToList();
+        List<PostcardData> filteredPostcardData = allPostcardsData.Select(postcard =>
+        {
+            if (allUserPostcardsData.Any(userPostcard => userPostcard.Id == postcard.Id))
+            {
+                return null;
+            }
+            return postcard;
+        }).Where(postcard => postcard != null).ToList();
+
 
         double userLatitude = coordinateRequest.Latitude.ToDouble();
         double userLongitude = coordinateRequest.Longitude.ToDouble();
